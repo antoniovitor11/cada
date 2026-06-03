@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0a0a0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CFA">
+<title>CFA · Estudo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0c; --bg2:#111114; --panel:#16161a; --panel2:#1d1d22;
+  --ink:#f4f1ea; --ink-dim:#8a877f; --ink-faint:#56544e;
+  --line:#26262b; --line2:#33333a;
+  --amber:#e8a13a; --amber-deep:#c47d1c;
+  --green:#7dd87d; --red:#e06b5e; --blue:#6aa8d8;
+  --anchor:#e8a13a; --context:#6aa8d8;
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Archivo',sans-serif;
+  font-size:16px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(232,161,58,.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(106,168,216,.05), transparent 60%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#app{position:relative;z-index:1;max-width:520px;margin:0 auto;min-height:100%;padding:0 18px}
+
+/* ---------- HEADER ---------- */
+header{padding:26px 2px 16px;display:flex;align-items:flex-end;justify-content:space-between}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand .kicker{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px}
+.brand h1{font-family:'Fraunces',serif;font-weight:900;font-size:34px;letter-spacing:-.02em;line-height:.92}
+.brand h1 em{font-style:italic;font-weight:500;color:var(--amber)}
+.streak{text-align:right;font-family:'Space Mono',monospace}
+.streak .num{font-size:24px;font-weight:700;color:var(--amber);line-height:1}
+.streak .lbl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:4px}
+
+/* ---------- VIEWS ---------- */
+.view{display:none;animation:rise .4s cubic-bezier(.2,.7,.2,1)}
+.view.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- DASHBOARD ---------- */
+.hero{
+  position:relative;background:linear-gradient(160deg,var(--panel),var(--bg2));
+  border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-bottom:14px;overflow:hidden;
+}
+.hero::before{content:"";position:absolute;top:-40px;right:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,161,58,.14),transparent 70%)}
+.hero .due-label{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:8px}
+.hero .due-num{font-family:'Fraunces',serif;font-size:62px;font-weight:900;line-height:.85;letter-spacing:-.03em}
+.hero .due-num.zero{color:var(--ink-faint)}
+.hero .due-sub{margin-top:6px;color:var(--ink-dim);font-size:13.5px;max-width:80%}
+.cta{
+  margin-top:18px;width:100%;border:none;border-radius:11px;padding:16px;
+  background:var(--amber);color:#1a1206;font-family:'Archivo';font-weight:900;
+  font-size:15px;letter-spacing:.02em;cursor:pointer;transition:transform .12s,filter .12s;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.cta:active{transform:scale(.975)}
+.cta.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink)}
+.cta:disabled{background:var(--panel2);color:var(--ink-faint);cursor:default}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 12px}
+.stat .v{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;line-height:1}
+.stat .k{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
+.stat .v.amber{color:var(--amber)} .stat .v.green{color:var(--green)} .stat .v.blue{color:var(--blue)}
+
+.section-h{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-dim);margin:22px 2px 11px;display:flex;justify-content:space-between;align-items:center}
+.section-h .add{color:var(--amber);font-weight:700;cursor:pointer;font-size:11px}
+
+/* ---------- MODULES ---------- */
+.mod{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:14px 15px;margin-bottom:9px;cursor:pointer;
+  display:flex;align-items:center;gap:13px;transition:border-color .15s,transform .12s;
+}
+.mod:active{transform:scale(.99)}
+.mod.has-due{border-color:var(--amber-deep)}
+.mod .ico{font-size:21px;width:30px;text-align:center;flex-shrink:0}
+.mod .body{flex:1;min-width:0}
+.mod .name{font-weight:700;font-size:15px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod .meta{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-top:3px;letter-spacing:.02em}
+.mod .right{text-align:right;flex-shrink:0}
+.mod .due-pill{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--amber);background:rgba(232,161,58,.12);padding:3px 8px;border-radius:20px}
+.mod .bar{width:46px;height:4px;background:var(--line2);border-radius:3px;margin-top:7px;overflow:hidden}
+.mod .bar i{display:block;height:100%;background:var(--green);border-radius:3px}
+.mod .prof{font-size:10.5px;color:var(--ink-faint);margin-top:3px}
+
+/* ---------- FLASHCARD ---------- */
+.review-top{display:flex;align-items:center;justify-content:space-between;padding:22px 2px 10px}
+.review-top .x{font-family:'Space Mono',monospace;font-size:13px;color:var(--ink-dim);cursor:pointer;padding:6px}
+.review-prog{flex:1;height:5px;background:var(--line);border-radius:4px;margin:0 14px;overflow:hidden}
+.review-prog i{display:block;height:100%;background:var(--amber);border-radius:4px;transition:width .35s ease}
+.review-count{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-dim)}
+
+.card-wrap{perspective:1600px;margin-top:14px}
+.card{
+  position:relative;width:100%;min-height:340px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1);
+}
+.card.flip{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border:1px solid var(--line);border-radius:18px;padding:24px;
+  display:flex;flex-direction:column;background:linear-gradient(165deg,var(--panel),var(--bg2));
+}
+.face.back{transform:rotateY(180deg);background:linear-gradient(165deg,#191510,var(--bg2))}
+.face .tag{display:flex;gap:8px;align-items:center;margin-bottom:auto}
+.chip{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700}
+.chip.anchor{background:rgba(232,161,58,.14);color:var(--amber)}
+.chip.context{background:rgba(106,168,216,.14);color:var(--blue)}
+.chip.mod{background:var(--panel2);color:var(--ink-dim);border:1px solid var(--line2)}
+.face .q{font-family:'Fraunces',serif;font-size:27px;font-weight:600;line-height:1.18;letter-spacing:-.015em;margin:auto 0}
+.face .a{font-size:16.5px;line-height:1.5;color:var(--ink);margin:auto 0;white-space:pre-wrap}
+.face .hint{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-top:auto}
+.recall-note{font-size:12.5px;color:var(--ink-dim);font-style:italic;margin-top:14px;padding-top:13px;border-top:1px dashed var(--line2)}
+
+.grade{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.grade button{
+  border:1px solid var(--line2);background:var(--panel);border-radius:11px;padding:13px 4px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .1s,background .15s;
+}
+.grade button:active{transform:scale(.94)}
+.grade .gl{font-family:'Archivo';font-weight:900;font-size:13px}
+.grade .gt{font-family:'Space Mono',monospace;font-size:9px;color:var(--ink-faint);letter-spacing:.04em}
+.grade .again{color:var(--red)} .grade .hard{color:#e0a05e}
+.grade .good{color:var(--green)} .grade .easy{color:var(--blue)}
+.grade.hidden{display:none}
+
+/* recall reveal button */
+.reveal{margin-top:16px;width:100%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:11px;padding:14px;font-family:'Archivo';font-weight:700;font-size:14px;cursor:pointer}
+.reveal:active{transform:scale(.98)}
+
+/* ---------- DONE ---------- */
+.done{text-align:center;padding:60px 10px}
+.done .big{font-family:'Fraunces',serif;font-size:54px;font-weight:900;line-height:.9;letter-spacing:-.02em}
+.done .big em{font-style:italic;color:var(--amber);font-weight:500}
+.done p{color:var(--ink-dim);margin:16px 0 26px;font-size:14.5px}
+
+/* ---------- TIMER ---------- */
+.timer-box{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--r);padding:30px 22px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.timer-box::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(232,161,58,.08),transparent 60%)}
+.timer-display{font-family:'Space Mono',monospace;font-size:74px;font-weight:700;letter-spacing:-.02em;line-height:1;position:relative}
+.timer-phase{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;position:relative}
+.timer-ctrls{display:flex;gap:9px;margin-top:22px;position:relative}
+.timer-ctrls button{flex:1;border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:11px;padding:14px;font-family:'Archivo';font-weight:700;font-size:14px;cursor:pointer}
+.timer-ctrls button.primary{background:var(--amber);color:#1a1206;border:none}
+.timer-ctrls button:active{transform:scale(.97)}
+.pomo-dots{display:flex;gap:6px;justify-content:center;margin-top:16px;position:relative}
+.pomo-dots i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.pomo-dots i.on{background:var(--amber)}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:10;
+  display:flex;justify-content:center;gap:4px;
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--bg) 60%,transparent);
+}
+.nav-inner{display:flex;gap:5px;background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:6px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.nav-inner button{
+  border:none;background:transparent;color:var(--ink-faint);
+  border-radius:13px;padding:9px 17px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s,background .15s;
+}
+.nav-inner button .ni{font-size:18px;line-height:1}
+.nav-inner button .nl{font-size:9px;font-family:'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.nav-inner button.active{color:var(--amber);background:var(--panel2)}
+
+/* ---------- MODAL / SHEET ---------- */
+.sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);display:none;align-items:flex-end}
+.sheet-bg.open{display:flex;animation:fade .25s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:100%;max-width:520px;margin:0 auto;background:var(--bg2);border:1px solid var(--line2);border-bottom:none;border-radius:22px 22px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));animation:up .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sheet h3{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.sheet .sub{color:var(--ink-dim);font-size:13px;margin-bottom:18px}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px}
+.fld input,.fld textarea,.fld select{
+  width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+  border-radius:10px;padding:12px;font-family:'Archivo';font-size:15px;resize:vertical;
+}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:none;border-color:var(--amber-deep)}
+.seg{display:flex;gap:7px}
+.seg button{flex:1;background:var(--panel);border:1px solid var(--line2);color:var(--ink-dim);border-radius:10px;padding:11px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer}
+.seg button.sel-anchor{background:rgba(232,161,58,.16);border-color:var(--amber-deep);color:var(--amber)}
+.seg button.sel-context{background:rgba(106,168,216,.16);border-color:var(--blue);color:var(--blue)}
+.sheet-actions{display:flex;gap:9px;margin-top:8px}
+.sheet-actions button{flex:1;border-radius:11px;padding:14px;font-family:'Archivo';font-weight:900;font-size:14px;cursor:pointer;border:none}
+.sheet-actions .save{background:var(--amber);color:#1a1206}
+.sheet-actions .cancel{background:var(--panel);color:var(--ink-dim);border:1px solid var(--line2)}
+
+/* module detail list */
+.concept-row{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-bottom:8px;display:flex;gap:11px;align-items:flex-start}
+.concept-row .dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.concept-row .dot.anchor{background:var(--amber)} .concept-row .dot.context{background:var(--blue)}
+.concept-row .ct{flex:1;min-width:0}
+.concept-row .ct .qq{font-weight:700;font-size:14px;line-height:1.3}
+.concept-row .ct .aa{font-size:12.5px;color:var(--ink-dim);margin-top:3px;line-height:1.4}
+.concept-row .when{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-faint);text-align:right;flex-shrink:0}
+.empty{text-align:center;color:var(--ink-faint);padding:40px 20px;font-size:14px}
+.empty .e-ico{font-size:34px;margin-bottom:12px;opacity:.5}
+.back-btn{font-family:'Space Mono',monospace;font-size:12px;color:var(--amber);cursor:pointer;padding:6px 0;display:inline-flex;align-items:center;gap:6px;margin:18px 0 4px}
+
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);z-index:99;background:var(--ink);color:var(--bg);font-family:'Archivo';font-weight:700;font-size:13px;padding:11px 18px;border-radius:30px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+.foot-note{text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.1em;padding:18px 0 8px}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ============ DASHBOARD ============ -->
+<div class="view active" id="v-home">
+  <header>
+    <div class="brand">
+      <span class="kicker">Escola Criattiva · 100h</span>
+      <h1>Curso<br><em>Avançado</em></h1>
+    </div>
+    <div class="streak"><span class="num" id="streakNum">0</span><span class="lbl">dias seguidos</span></div>
+  </header>
+
+  <div class="hero">
+    <div class="due-label">Revisões para hoje</div>
+    <div class="due-num" id="dueBig">0</div>
+    <div class="due-sub" id="dueSub">Repetição espaçada — quanto mais você acerta, mais raro reaparece.</div>
+    <button class="cta" id="startReview">▶ Iniciar revisão do dia</button>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat"><div class="v amber" id="stTotal">0</div><div class="k">Conceitos</div></div>
+    <div class="stat"><div class="v green" id="stMastered">0</div><div class="k">Dominados</div></div>
+    <div class="stat"><div class="v blue" id="stReviews">0</div><div class="k">Revisões</div></div>
+  </div>
+
+  <div class="section-h">Módulos do curso <span class="add" id="quickAdd">+ conceito</span></div>
+  <div id="modList"></div>
+  <div class="foot-note">12 MÓDULOS · 27 AULAS · MÉTODO ÂNCORA / CONTEXTO</div>
+</div>
+
+<!-- ============ REVIEW ============ -->
+<div class="view" id="v-review">
+  <div class="review-top">
+    <span class="x" id="quitReview">✕ sair</span>
+    <div class="review-prog"><i id="revBar"></i></div>
+    <span class="review-count" id="revCount">0/0</span>
+  </div>
+  <div class="card-wrap">
+    <div class="card" id="card">
+      <div class="face front">
+        <div class="tag" id="frontTags"></div>
+        <div class="q" id="frontQ"></div>
+        <div class="hint" id="frontHint">toque para revelar</div>
+      </div>
+      <div class="face back">
+        <div class="tag" id="backTags"></div>
+        <div class="a" id="backA"></div>
+        <div class="recall-note" id="recallNote"></div>
+      </div>
+    </div>
+  </div>
+  <button class="reveal" id="revealBtn">Eu lembrei? Revelar resposta ↓</button>
+  <div class="grade hidden" id="gradeRow">
+    <button onclick="grade(0)"><span class="gl again">Errei</span><span class="gt">de novo</span></button>
+    <button onclick="grade(3)"><span class="gl hard">Difícil</span><span class="gt">+1-2d</span></button>
+    <button onclick="grade(4)"><span class="gl good">Bom</span><span class="gt">normal</span></button>
+    <button onclick="grade(5)"><span class="gl easy">Fácil</span><span class="gt">+longo</span></button>
+  </div>
+</div>
+
+<!-- ============ MODULE DETAIL ============ -->
+<div class="view" id="v-mod">
+  <div class="back-btn" id="modBack">← módulos</div>
+  <header style="padding-top:6px">
+    <div class="brand">
+      <span class="kicker" id="modKicker">Módulo</span>
+      <h1 id="modTitle" style="font-size:30px"></h1>
+    </div>
+  </header>
+  <div style="display:flex;gap:9px;margin:6px 0 18px">
+    <button class="cta" id="modReview" style="font-size:13px;padding:13px">▶ Revisar módulo</button>
+    <button class="cta ghost" id="modAdd" style="font-size:13px;padding:13px;flex:0 0 auto;width:54px">+</button>
+  </div>
+  <div class="section-h">Conceitos</div>
+  <div id="conceptList"></div>
+</div>
+
+<!-- ============ TIMER ============ -->
+<div class="view" id="v-timer">
+  <header>
+    <div class="brand"><span class="kicker">Sessão de foco</span><h1>Pomodoro</h1></div>
+  </header>
+  <div class="timer-box">
+    <div class="timer-phase" id="tPhase">Foco</div>
+    <div class="timer-display" id="tDisplay">25:00</div>
+    <div class="pomo-dots" id="pomoDots"></div>
+    <div class="timer-ctrls">
+      <button class="primary" id="tToggle">Iniciar</button>
+      <button id="tReset">Zerar</button>
+      <button id="tSkip">Pular</button>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><div class="v amber" id="tFocusCount">0</div><div class="k">Focos hoje</div></div>
+    <div class="stat"><div class="v" id="tMinutes">0</div><div class="k">Minutos</div></div>
+    <div class="stat"><div class="v blue">25/5</div><div class="k">Ciclo</div></div>
+  </div>
+  <div class="foot-note">4 FOCOS = 1 PAUSA LONGA · ALINHADO AO SEU MÉTODO</div>
+</div>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-inner">
+    <button class="active" data-v="home"><span class="ni">◆</span><span class="nl">Hub</span></button>
+    <button data-v="review"><span class="ni">⟳</span><span class="nl">Revisar</span></button>
+    <button data-v="timer"><span class="ni">◷</span><span class="nl">Foco</span></button>
+  </div>
+</nav>
+</div>
+
+<!-- ============ ADD SHEET ============ -->
+<div class="sheet-bg" id="sheetBg">
+  <div class="sheet">
+    <h3>Novo conceito</h3>
+    <div class="sub">Entra direto na fila de repetição espaçada.</div>
+    <div class="fld"><label>Módulo</label><select id="fMod"></select></div>
+    <div class="fld"><label>Pergunta / conceito (frente)</label><textarea id="fQ" rows="2" placeholder="Ex: O que define a hora dourada?"></textarea></div>
+    <div class="fld"><label>Resposta (verso)</label><textarea id="fA" rows="3" placeholder="Explique como se ensinasse alguém."></textarea></div>
+    <div class="fld"><label>Tipo</label>
+      <div class="seg">
+        <button id="segAnchor" class="sel-anchor">Âncora · dominar</button>
+        <button id="segContext">Contexto · conhecer</button>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="cancel" id="sheetCancel">Cancelar</button>
+      <button class="save" id="sheetSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CFA Study — companion offline. Persistência via localStorage.
+   SM-2 simplificado para repetição espaçada real.
+   ============================================================ */
+const LS="cfa_study_v1";
+const MODULES=[
+  {id:"intro",  name:"Introdução ao Curso", ico:"🎬", prof:"—"},
+  {id:"hist",   name:"História da Arte",     ico:"🏛", prof:"Henrique"},
+  {id:"doc",    name:"Fotografia Documental",ico:"📰", prof:"Thiago"},
+  {id:"lum",    name:"Iluminação",           ico:"💡", prof:"—", heavy:true},
+  {id:"light",  name:"Lightroom / Cor",      ico:"🎚", prof:"Gabriel Moreira"},
+  {id:"longa",  name:"Longa Exposição",      ico:"🌊", prof:"—"},
+  {id:"moda",   name:"Fotografia de Moda",   ico:"👗", prof:"—"},
+  {id:"comp",   name:"Composição",           ico:"▦", prof:"—"},
+  {id:"retr",   name:"Retrato",              ico:"🙂", prof:"—"},
+  {id:"port",   name:"Portfólio",            ico:"🗂", prof:"—"},
+  {id:"neg",    name:"Negócio / Mercado",    ico:"💼", prof:"—"},
+  {id:"proj",   name:"Projeto Final",        ico:"🎯", prof:"—"},
+];
+/* sementes — conceitos de exemplo já alinhados ao método âncora/contexto.
+   Edite/apague à vontade; servem pra você ver o app funcionando hoje. */
+const SEED=[
+  {mod:"intro",q:"Qual a diferença entre conceito Âncora e Contexto no seu método?",a:"Âncora = precisa DOMINAR (recall ativo, aplicação). Contexto = só CONHECER (reconhecer quando aparece). Pareto: 20% âncora carrega 80% do valor.",type:"anchor"},
+  {mod:"lum",q:"O que é a regra do inverso do quadrado na iluminação?",a:"A intensidade da luz cai com o quadrado da distância: dobrar a distância da fonte reduz a luz a 1/4. Por isso aproximar a softbox aumenta muito a luz e suaviza a sombra.",type:"anchor"},
+  {mod:"lum",q:"Luz dura vs. luz suave — o que controla?",a:"O tamanho relativo da fonte em relação ao sujeito. Fonte grande e próxima = suave (sombra gradual). Fonte pequena e distante = dura (sombra recortada).",type:"anchor"},
+  {mod:"longa",q:"Como calcular o ajuste de stops ao usar um filtro ND?",a:"Cada stop dobra/divide o tempo. ND8 = 3 stops → tempo base ×8. Ex: 1/60s vira ~1/8s. ND1000 = 10 stops → ×1000.",type:"anchor"},
+  {mod:"doc",q:"O que diferencia fotografia documental de fotojornalismo?",a:"Documental constrói narrativa de longo prazo sobre um tema/pessoa, com imersão e ponto de vista autoral. Fotojornalismo serve à notícia, é mais pontual e factual.",type:"context"},
+  {mod:"comp",q:"O que é a regra dos terços e qual sua função real?",a:"Dividir o quadro em 3×3 e posicionar elementos-chave nas linhas/cruzamentos. Função: criar tensão e equilíbrio dinâmico em vez de centralização estática. É ponto de partida, não lei.",type:"context"},
+  {mod:"light",q:"Diferença entre balanço de branco e calibração de cor no Lightroom?",a:"WB ajusta a temperatura/matiz da cena (neutralizar dominante). Calibração de cor (Camera Calibration) ajusta como o RAW interpreta os primários — afeta a base de toda a imagem.",type:"anchor"},
+  {mod:"hist",q:"Por que o Pictorialismo foi importante na história da fotografia?",a:"Primeiro movimento a defender a fotografia como arte (não só registro), imitando pintura com foco suave e intervenção manual. Abriu caminho para a fotografia ser levada a sério esteticamente.",type:"context"},
+];
+
+let DB=load();
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(LS));if(d&&d.cards)return d;}catch(e){}
+  const cards=SEED.map((s,i)=>mk(s,i));
+  return {cards,streak:0,lastStudy:null,reviewsDone:0,pomo:{focusCount:0,minutes:0,date:today()}};
+}
+function save(){try{localStorage.setItem(LS,JSON.stringify(DB))}catch(e){}}
+function mk(s,i){return{id:"c"+Date.now()+"_"+i+Math.random().toString(36).slice(2,6),mod:s.mod,q:s.q,a:s.a,type:s.type||"anchor",ef:2.5,reps:0,interval:0,due:today(),created:today()}}
+function today(){const d=new Date();return d.toISOString().slice(0,10)}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function dueToday(c){return c.due<=today()}
+
+/* ---------- SM-2 ---------- */
+function applyGrade(c,q){
+  if(q<3){c.reps=0;c.interval=1;}
+  else{
+    c.ef=Math.max(1.3,c.ef+(0.1-(5-q)*(0.08+(5-q)*0.02)));
+    c.reps++;
+    if(c.reps===1)c.interval=1;
+    else if(c.reps===2)c.interval=q===3?2:6;
+    else c.interval=Math.round(c.interval*c.ef);
+    if(q===3)c.interval=Math.max(1,Math.round(c.interval*0.7));
+  }
+  c.due=addDays(c.interval);
+  DB.reviewsDone++;
+}
+
+/* ---------- DASHBOARD RENDER ---------- */
+function refreshHome(){
+  checkStreak();
+  const due=DB.cards.filter(dueToday).length;
+  const big=document.getElementById('dueBig');
+  big.textContent=due; big.classList.toggle('zero',due===0);
+  document.getElementById('dueSub').textContent = due===0
+    ? "Tudo em dia. Volte amanhã ou adicione conceitos novos."
+    : "Repetição espaçada — quanto mais você acerta, mais raro reaparece.";
+  const btn=document.getElementById('startReview');
+  btn.disabled=due===0; btn.textContent=due===0?"✓ Nada para revisar hoje":"▶ Iniciar revisão do dia ("+due+")";
+  document.getElementById('stTotal').textContent=DB.cards.length;
+  document.getElementById('stMastered').textContent=DB.cards.filter(c=>c.reps>=3&&c.interval>=21).length;
+  document.getElementById('stReviews').textContent=DB.reviewsDone;
+  document.getElementById('streakNum').textContent=DB.streak;
+  renderMods();
+}
+function renderMods(){
+  const wrap=document.getElementById('modList');wrap.innerHTML='';
+  MODULES.forEach(m=>{
+    const cs=DB.cards.filter(c=>c.mod===m.id);
+    if(cs.length===0&&!m.heavy)return; // só mostra módulos com conteúdo (e os pesados sempre)
+    const due=cs.filter(dueToday).length;
+    const mastered=cs.filter(c=>c.reps>=3&&c.interval>=21).length;
+    const pct=cs.length?Math.round(mastered/cs.length*100):0;
+    const el=document.createElement('div');
+    el.className='mod'+(due>0?' has-due':'');
+    el.innerHTML=`<div class="ico">${m.ico}</div>
+      <div class="body">
+        <div class="name">${m.name}</div>
+        <div class="meta">${cs.length} conceito${cs.length!==1?'s':''} · ${pct}% dominado</div>
+        ${m.prof!=='—'?`<div class="prof">prof. ${m.prof}</div>`:''}
+      </div>
+      <div class="right">
+        ${due>0?`<span class="due-pill">${due} hoje</span>`:''}
+        <div class="bar"><i style="width:${pct}%"></i></div>
+      </div>`;
+    el.onclick=()=>openMod(m.id);
+    wrap.appendChild(el);
+  });
+  if(!wrap.children.length){wrap.innerHTML='<div class="empty"><div class="e-ico">📭</div>Nenhum conceito ainda.<br>Toque em <b>+ conceito</b> para começar.</div>';}
+}
+
+/* ---------- REVIEW ENGINE ---------- */
+let queue=[],qi=0,scope=null;
+function startReview(modId){
+  scope=modId||null;
+  queue=DB.cards.filter(c=>dueToday(c)&&(!modId||c.mod===modId));
+  if(!queue.length){toast("Nada para revisar aqui");return;}
+  queue.sort(()=>Math.random()-0.5);
+  qi=0; show('review'); setNav(null); renderCard();
+}
+function renderCard(){
+  if(qi>=queue.length){finishReview();return;}
+  const c=queue[qi];
+  document.getElementById('card').classList.remove('flip');
+  document.getElementById('gradeRow').classList.add('hidden');
+  document.getElementById('revealBtn').style.display='block';
+  const m=MODULES.find(x=>x.id===c.mod);
+  const tags=`<span class="chip ${c.type}">${c.type==='anchor'?'Âncora':'Contexto'}</span><span class="chip mod">${m?m.name:''}</span>`;
+  document.getElementById('frontTags').innerHTML=tags;
+  document.getElementById('backTags').innerHTML=tags;
+  document.getElementById('frontQ').textContent=c.q;
+  document.getElementById('backA').textContent=c.a;
+  document.getElementById('recallNote').textContent=c.type==='anchor'
+    ?"Âncora: você consegue EXPLICAR isso sem olhar? Se não, marque Errei."
+    :"Contexto: basta reconhecer. Se soou familiar, marque Bom.";
+  document.getElementById('revBar').style.width=(qi/queue.length*100)+'%';
+  document.getElementById('revCount').textContent=(qi+1)+'/'+queue.length;
+}
+function flipCard(){
+  document.getElementById('card').classList.add('flip');
+  document.getElementById('revealBtn').style.display='none';
+  document.getElementById('gradeRow').classList.remove('hidden');
+}
+function grade(q){
+  const c=queue[qi];
+  applyGrade(c,q);
+  markStudiedToday(); save();
+  qi++; renderCard();
+}
+function finishReview(){
+  document.getElementById('revBar').style.width='100%';
+  const v=document.getElementById('v-review');
+  v.innerHTML=`<div class="done">
+    <div class="big">Sessão<br><em>concluída</em></div>
+    <p>${queue.length} conceito${queue.length!==1?'s':''} revisado${queue.length!==1?'s':''}. As próximas datas já foram recalculadas.</p>
+    <button class="cta" id="doneHome">Voltar ao hub</button></div>`;
+  document.getElementById('doneHome').onclick=()=>{location.reload()}; // simples e seguro: recarrega estado salvo
+  refreshHome();
+}
+
+/* ---------- STREAK ---------- */
+function markStudiedToday(){
+  if(DB.lastStudy===today())return;
+  const y=addDays(-1);
+  DB.streak = (DB.lastStudy===y)? DB.streak+1 : 1;
+  DB.lastStudy=today();
+}
+function checkStreak(){
+  if(DB.lastStudy&&DB.lastStudy!==today()&&DB.lastStudy!==addDays(-1)){DB.streak=0;save();}
+}
+
+/* ---------- MODULE DETAIL ---------- */
+let curMod=null;
+function openMod(id){
+  curMod=id; const m=MODULES.find(x=>x.id===id);
+  document.getElementById('modKicker').textContent=m.prof!=='—'?'prof. '+m.prof:'Módulo do curso';
+  document.getElementById('modTitle').textContent=m.name;
+  const cs=DB.cards.filter(c=>c.mod===id).sort((a,b)=>a.due<b.due?-1:1);
+  const wrap=document.getElementById('conceptList');wrap.innerHTML='';
+  if(!cs.length){wrap.innerHTML='<div class="empty"><div class="e-ico">🌱</div>Sem conceitos neste módulo.<br>Toque em <b>+</b> para adicionar.</div>';}
+  cs.forEach(c=>{
+    const overdue=dueToday(c);
+    const el=document.createElement('div');el.className='concept-row';
+    el.innerHTML=`<div class="dot ${c.type}"></div>
+      <div class="ct"><div class="qq">${esc(c.q)}</div><div class="aa">${esc(c.a)}</div></div>
+      <div class="when">${overdue?'<span style="color:var(--amber)">hoje</span>':'em '+daysUntil(c.due)+'d'}</div>`;
+    wrap.appendChild(el);
+  });
+  show('mod'); setNav(null);
+}
+function daysUntil(d){const diff=Math.round((new Date(d)-new Date(today()))/864e5);return Math.max(0,diff)}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+/* ---------- ADD SHEET ---------- */
+let sheetType='anchor';
+function openSheet(modId){
+  const sel=document.getElementById('fMod');sel.innerHTML='';
+  MODULES.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.name;sel.appendChild(o)});
+  if(modId)sel.value=modId;
+  document.getElementById('fQ').value='';document.getElementById('fA').value='';
+  setSheetType('anchor');
+  document.getElementById('sheetBg').classList.add('open');
+  setTimeout(()=>document.getElementById('fQ').focus(),300);
+}
+function setSheetType(t){
+  sheetType=t;
+  document.getElementById('segAnchor').className=t==='anchor'?'sel-anchor':'';
+  document.getElementById('segContext').className=t==='context'?'sel-context':'';
+}
+function saveConcept(){
+  const q=document.getElementById('fQ').value.trim();
+  const a=document.getElementById('fA').value.trim();
+  if(!q||!a){toast("Preencha frente e verso");return;}
+  const c=mk({mod:document.getElementById('fMod').value,q,a,type:sheetType},DB.cards.length);
+  DB.cards.unshift(c);save();
+  document.getElementById('sheetBg').classList.remove('open');
+  toast("Conceito adicionado ✓");
+  refreshHome(); if(curMod&&document.getElementById('v-mod').classList.contains('active'))openMod(curMod);
+}
+
+/* ---------- POMODORO ---------- */
+let pTime=25*60,pRunning=false,pPhase='focus',pInt=null,pCount=0;
+const FOCUS=25*60,SHORT=5*60,LONG=15*60;
+function renderTimer(){
+  const m=Math.floor(pTime/60),s=pTime%60;
+  document.getElementById('tDisplay').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('tPhase').textContent=pPhase==='focus'?'Foco':(pPhase==='long'?'Pausa longa':'Pausa');
+  document.getElementById('tToggle').textContent=pRunning?'Pausar':'Iniciar';
+  if(DB.pomo.date!==today()){DB.pomo={focusCount:0,minutes:0,date:today()};save();}
+  document.getElementById('tFocusCount').textContent=DB.pomo.focusCount;
+  document.getElementById('tMinutes').textContent=DB.pomo.minutes;
+  const dots=document.getElementById('pomoDots');dots.innerHTML='';
+  for(let i=0;i<4;i++){const d=document.createElement('i');if(i<(DB.pomo.focusCount%4||(DB.pomo.focusCount&&pPhase!=='focus'?4:0)))d.className='on';dots.appendChild(d)}
+}
+function tick(){
+  if(pTime>0){pTime--;if(pPhase==='focus'&&pTime%60===0){DB.pomo.minutes++;save()}renderTimer();}
+  else{phaseEnd();}
+}
+function phaseEnd(){
+  clearInterval(pInt);pRunning=false;
+  try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}
+  if(pPhase==='focus'){
+    DB.pomo.focusCount++;save();
+    if(DB.pomo.focusCount%4===0){pPhase='long';pTime=LONG;}else{pPhase='short';pTime=SHORT;}
+    toast("Foco completo! Hora da pausa.");
+  }else{pPhase='focus';pTime=FOCUS;toast("Pausa acabou — de volta ao foco.");}
+  renderTimer();
+}
+function toggleTimer(){
+  pRunning=!pRunning;
+  if(pRunning)pInt=setInterval(tick,1000);else clearInterval(pInt);
+  renderTimer();
+}
+function resetTimer(){clearInterval(pInt);pRunning=false;pTime=pPhase==='focus'?FOCUS:(pPhase==='long'?LONG:SHORT);renderTimer();}
+function skipPhase(){clearInterval(pInt);pRunning=false;phaseEnd();}
+
+/* ---------- NAV / VIEWS ---------- */
+function show(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('v-'+v).classList.add('active');window.scrollTo(0,0);}
+function setNav(v){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.v===v));}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  const v=b.dataset.v;setNav(v);
+  if(v==='home'){show('home');refreshHome();}
+  else if(v==='review'){if(DB.cards.filter(dueToday).length){startReview();}else{show('home');refreshHome();toast("Nada para revisar — adicione conceitos");setNav('home');}}
+  else if(v==='timer'){show('timer');renderTimer();}
+});
+
+/* ---------- TOAST ---------- */
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1900);}
+
+/* ---------- BIND ---------- */
+document.getElementById('startReview').onclick=()=>startReview();
+document.getElementById('card').onclick=()=>{if(!document.getElementById('card').classList.contains('flip'))flipCard()};
+document.getElementById('revealBtn').onclick=flipCard;
+document.getElementById('quitReview').onclick=()=>{show('home');setNav('home');refreshHome()};
+document.getElementById('quickAdd').onclick=()=>openSheet();
+document.getElementById('modBack').onclick=()=>{show('home');setNav('home');refreshHome()};
+document.getElementById('modAdd').onclick=()=>openSheet(curMod);
+document.getElementById('modReview').onclick=()=>startReview(curMod);
+document.getElementById('segAnchor').onclick=()=>setSheetType('anchor');
+document.getElementById('segContext').onclick=()=>setSheetType('context');
+document.getElementById('sheetSave').onclick=saveConcept;
+document.getElementById('sheetCancel').onclick=()=>document.getElementById('sheetBg').classList.remove('open');
+document.getElementById('sheetBg').onclick=e=>{if(e.target.id==='sheetBg')document.getElementById('sheetBg').classList.remove('open')};
+document.getElementById('tToggle').onclick=toggleTimer;
+document.getElementById('tReset').onclick=resetTimer;
+document.getElementById('tSkip').onclick=skipPhase;
+
+/* ---------- INSTALL AS PWA (inline manifest) ---------- */
+const manifest={name:"CFA · Estudo",short_name:"CFA",display:"standalone",background_color:"#0a0a0c",theme_color:"#0a0a0c",start_url:".",icons:[{src:"data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="512" height="512" rx="96" fill="%230a0a0c"/><text x="50%" y="58%" font-family="serif" font-size="300" font-weight="900" fill="%23e8a13a" text-anchor="middle">C</text></svg>'),sizes:"512x512",type:"image/svg+xml"}]};
+const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(blob);document.head.appendChild(link);
+
+/* ---------- INIT ---------- */
+refreshHome();renderTimer();
+</script>
+</body>
+</html>
