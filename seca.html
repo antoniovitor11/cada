@@ -44,8 +44,9 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 
 .banner{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-left:3px solid var(--acc-deep);border-radius:12px;padding:12px 15px;margin-bottom:11px}
 .banner.warn{border-left-color:var(--amber)}
+.banner.alert{border-left-color:var(--red)}
 .banner .bk{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
-.banner.warn .bk{color:var(--amber)}
+.banner.warn .bk{color:var(--amber)} .banner.alert .bk{color:var(--red)}
 .banner .bt{font-size:13.5px;line-height:1.45;color:var(--ink-dim)}
 .banner .bt b{color:var(--ink)}
 
@@ -64,9 +65,8 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 .mctrl{display:flex;gap:6px}
 .mctrl button{flex:1;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:9px;padding:9px 0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer}
 .mctrl button:active{transform:scale(.93)}
-.protadd{display:flex;gap:5px;margin-top:6px}
-.protadd button{flex:1;border:1px solid rgba(169,139,214,.3);background:rgba(169,139,214,.1);color:var(--purple);border-radius:8px;padding:7px 0;font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;cursor:pointer}
-.protadd button:active{transform:scale(.93)}
+.protlog{width:100%;border:1px solid rgba(169,139,214,.3);background:rgba(169,139,214,.1);color:var(--purple);border-radius:9px;padding:9px 0;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-top:2px}
+.protlog:active{transform:scale(.96)}
 
 .hunger-btn{width:100%;border:1px dashed var(--line2);background:var(--panel);color:var(--ink-dim);border-radius:12px;padding:13px;font-family:'Archivo';font-weight:700;font-size:13.5px;cursor:pointer;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:8px}
 .hunger-btn:active{transform:scale(.99)}
@@ -87,6 +87,7 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 .tl-card .lab .ck{margin-left:auto;width:20px;height:20px;border-radius:6px;border:2px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s}
 .tl-card .sub{font-size:12px;color:var(--ink-dim);margin-top:3px;line-height:1.4}
 .tl-card .prot{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--purple);margin-top:5px}
+.tl-card .stockw{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--red);margin-top:5px}
 .tl-item.done .tl-node .dot{background:var(--acc-deep);border-color:var(--acc-deep)}
 .tl-item.done .tl-card{border-color:var(--acc-dim);background:linear-gradient(160deg,rgba(98,208,138,.06),var(--panel))}
 .tl-item.done .tl-card .lab{color:var(--ink-dim)}
@@ -119,6 +120,7 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 .bigbtn{width:100%;border:none;border-radius:12px;padding:15px;font-family:'Archivo';font-weight:900;font-size:14.5px;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:9px}
 .bigbtn.acc{background:var(--acc);color:#08120c}
 .bigbtn.ghost{background:var(--panel);color:var(--ink-dim);border:1px solid var(--line2);font-weight:700}
+.bigbtn.danger{background:rgba(224,107,94,.12);color:var(--red);border:1px solid rgba(224,107,94,.3);font-weight:700}
 .bigbtn.done{background:var(--panel2);color:var(--acc);border:1px solid var(--acc-dim)}
 .bigbtn:active{transform:scale(.985)}
 
@@ -138,6 +140,7 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 .mealrow .mn{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:7px}
 .mealrow .mn .hr{font-family:'Space Mono',monospace;font-size:11px;color:var(--purple);margin-left:auto;font-weight:700}
 .mealrow .mi{font-size:12.5px;color:var(--ink-dim);margin-top:5px;line-height:1.45}
+.mealrow .mw{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--red);margin-top:6px}
 .force-card{background:linear-gradient(160deg,rgba(168,122,74,.1),var(--bg2));border:1px solid var(--line2);border-radius:12px;padding:15px;cursor:pointer;display:flex;align-items:center;gap:13px}
 .force-card:active{transform:scale(.99)}
 .force-card .fi{font-size:24px}
@@ -145,14 +148,41 @@ header{padding:22px 2px 10px;display:flex;align-items:flex-end;justify-content:s
 .force-card .fm{font-size:12.5px;color:var(--ink-dim);margin-top:3px}
 .force-card .fa{margin-left:auto;color:var(--acc);font-family:'Space Mono',monospace;font-size:16px;font-weight:700}
 
-.shop-cat{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin:18px 2px 9px}
-.shop-item{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:12px;cursor:pointer}
-.shop-item:active{transform:scale(.99)}
-.shop-item .box{width:22px;height:22px;border-radius:6px;border:2px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent}
-.shop-item.got .box{border-color:var(--acc-deep);background:var(--acc-deep);color:#08120c}
-.shop-item .sn{flex:1;font-weight:700;font-size:14px}
-.shop-item.got .sn{color:var(--ink-faint);text-decoration:line-through}
-.shop-item .sq{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-dim)}
+/* COMPRAS / ESTOQUE */
+.buynow{margin-bottom:2px}
+.buy-row{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(160deg,rgba(224,177,94,.08),var(--panel));border:1px solid rgba(224,177,94,.25);border-radius:10px;padding:11px 14px;margin-bottom:7px}
+.buy-row.urgent{background:linear-gradient(160deg,rgba(224,107,94,.1),var(--panel));border-color:rgba(224,107,94,.3)}
+.buy-row .bn{font-weight:700;font-size:13.5px}
+.buy-row .bq{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--amber);font-weight:700;text-align:right;white-space:nowrap}
+.buy-row.urgent .bq{color:var(--red)}
+.buy-empty{background:var(--panel);border:1px solid var(--acc-dim);border-radius:10px;padding:14px;color:var(--acc);font-size:13.5px;font-weight:700;text-align:center}
+.shop-cat{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin:16px 2px 9px}
+.inv-item{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:11px;cursor:pointer}
+.inv-item:active{transform:scale(.99)}
+.inv-item .idot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.inv-item .ib{flex:1;min-width:0}
+.inv-item .iname{font-weight:700;font-size:14px}
+.inv-item .imeta{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:3px}
+.inv-item .ilast{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--ink-faint);margin-top:2px}
+.inv-item .iright{flex-shrink:0}
+.pill{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.pill.red{background:rgba(224,107,94,.14);color:var(--red)}
+.pill.amber{background:rgba(224,177,94,.14);color:var(--amber)}
+.pill.green{background:rgba(98,208,138,.12);color:var(--acc)}
+.pill.dim{background:var(--panel2);color:var(--ink-faint)}
+.invstock{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:16px;margin-bottom:10px}
+.invstock button{width:46px;height:46px;border-radius:11px;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);font-size:24px;font-weight:700;cursor:pointer}
+.invstock button:active{transform:scale(.92)}
+.invstock .isv{text-align:center;min-width:96px}
+.invstock .isv span{font-family:'Space Mono',monospace;font-size:30px;font-weight:700;color:var(--acc)}
+.invstock .isv small{display:block;font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.invinfo{font-size:12.5px;color:var(--ink-dim);text-align:center;line-height:1.5;margin-bottom:6px}
+.invinfo b{color:var(--ink)}
+
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.pchip{border:1px solid rgba(169,139,214,.3);background:rgba(169,139,214,.08);color:var(--ink);border-radius:10px;padding:11px;font-family:'Archivo';font-weight:700;font-size:12.5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.pchip small{font-family:'Space Mono',monospace;color:var(--purple);font-size:11px}
+.pchip:active{transform:scale(.96)}
 
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .cal-head .cm{font-family:'Fraunces',serif;font-size:21px;font-weight:900;text-transform:capitalize}
@@ -208,7 +238,7 @@ svg.chart{width:100%;height:130px;display:block;overflow:visible}
 
 nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 60%,transparent)}
 .nav-inner{display:flex;gap:2px;background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:5px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
-.nav-inner button{border:none;background:transparent;color:var(--ink-faint);border-radius:13px;padding:8px 11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-inner button{border:none;background:transparent;color:var(--ink-faint);border-radius:13px;padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
 .nav-inner button .ni{font-size:17px;line-height:1}
 .nav-inner button .nl{font-size:8.5px;font-family:'Space Mono',monospace;letter-spacing:.04em;text-transform:uppercase}
 .nav-inner button.active{color:var(--acc);background:var(--panel2)}
@@ -255,6 +285,7 @@ nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-conte
     <div class="streak"><span class="num" id="streakNum">0</span><span class="lbl">dias na linha</span></div>
   </header>
   <div id="vespera"></div>
+  <div id="invAlert"></div>
   <div class="duo">
     <div class="metric water">
       <div class="top"><span class="mk">💧 Água</span><span class="mtar">meta 3,0L</span></div>
@@ -266,7 +297,7 @@ nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-conte
       <div class="top"><span class="mk">🥩 Proteína</span><span class="mtar">meta 150g</span></div>
       <div class="mv"><span id="protG">0</span><span class="u"> g</span></div>
       <div class="mbar"><i id="protBar" style="width:0%"></i></div>
-      <div class="protadd"><button data-p="25">+whey 25</button><button data-p="12">+2 ovos</button><button data-p="26">+atum 26</button></div>
+      <button class="protlog" id="protLog">+ registrar proteína</button>
     </div>
   </div>
   <button class="hunger-btn" id="hungerBtn">✋ Tô com fome <b>fora de hora</b> →</button>
@@ -308,14 +339,15 @@ nav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;justify-conte
   <div class="foot-note">JANELA REAL ~11h–21h · SEM CAFÉ DA MANHÃ FORÇADO · ÁGUA NO LUGAR DE SUCO</div>
 </div>
 
-<!-- ===== COMPRAS ===== -->
+<!-- ===== COMPRAS / ESTOQUE ===== -->
 <div class="view" id="v-compras">
-  <header><div class="brand"><span class="kicker">Lista da semana · compre quando precisar</span><h1>Compras</h1></div></header>
-  <div class="banner"><div class="bk">como funciona</div><div class="bt">Lista calculada do seu cardápio fixo pra <b>~1 semana</b>. Marque o que já tem / já comprou. Toque em <b>limpar</b> pra recomeçar antes de ir ao mercado.</div></div>
-  <div class="section-h">Itens <span class="hint" id="shopCount"></span></div>
-  <div id="shopList"></div>
-  <button class="bigbtn ghost" id="shopClear">↺ Limpar marcações</button>
-  <div class="foot-note">JANTAR É O BURACO — SE COMPRAR SÓ UMA COISA, COMPRE O DO JANTAR</div>
+  <header><div class="brand"><span class="kicker">Estoque + lista inteligente</span><h1>Compras</h1></div></header>
+  <div class="banner"><div class="bk">🍌 banana &amp; câimbra</div><div class="bt">Meta: <b>2 bananas/dia</b> (manhã + lanche) pelo potássio. Mas câimbra também é <b>pouca água + sódio + magnésio</b> — então mantém os 3L. Banana ajuda, hidratação resolve.</div></div>
+  <div class="section-h">🛒 Comprar agora <span class="hint" id="buyCount"></span></div>
+  <div id="buyNow" class="buynow"></div>
+  <div class="section-h">Estoque <span class="hint" id="shopSummary"></span></div>
+  <div id="invList"></div>
+  <div class="foot-note">TOQUE NUM ITEM PRA REGISTRAR COMPRA, AJUSTAR OU MARCAR QUE ACABOU/ESTRAGOU<br>jantar é o buraco — nunca deixe acabar tilápia/alcatra</div>
 </div>
 
 <!-- ===== CALENDÁRIO ===== -->
@@ -381,10 +413,10 @@ const DAYTYPE={seg:'Tipo A · dia pesado',ter:'Tipo B · gargalo',qua:'Tipo C ·
 const WATER_GLASS=0.25, GLASS_GOAL=12, PROT_GOAL=150;
 
 const MEALS={
-  r1:{nome:'Refeição 1',itens:'3 ovos · 1 iogurte natural (170g) · 1 fruta · café/chá sem açúcar',prot:25},
-  r2:{nome:'Almoço',itens:'130g carne magra ou peixe · 80g arroz · 1 concha de feijão · salada/legumes À VONTADE · 1 col. azeite · água',prot:38},
-  r3:{nome:'Lanche',itens:'1 iogurte natural (170g) · 2 ovos cozidos · 1 punhado de fruta',prot:19},
-  r4:{nome:'Jantar leve',itens:'130g frango desfiado/carne moída · 100g batata-doce/abóbora ou cuscuz · legumes. Plano B (3 min): 3 ovos + 1 atum + tomate/folhas + 2 fatias pão integral',prot:34},
+  r1:{nome:'Refeição 1',itens:'3 ovos · 1 iogurte natural (170g) · 1 banana · café/chá sem açúcar',prot:25},
+  r2:{nome:'Almoço',itens:'130g alcatra ou tilápia · 80g arroz · 1 concha de feijão · salada/legumes À VONTADE · 1 col. azeite · água',prot:38},
+  r3:{nome:'Lanche',itens:'1 iogurte natural (170g) · 2 ovos cozidos · 1 banana',prot:19},
+  r4:{nome:'Jantar leve',itens:'130g tilápia ou alcatra (assada/grelhada) · 100g batata-doce/abóbora ou cuscuz · legumes. Plano B (3 min): 4 ovos + queijo branco + tomate/folhas + 2 fatias pão integral',prot:30},
 };
 
 const TL={
@@ -394,7 +426,7 @@ const TL={
     {t:'11:00',ico:'🍳',label:'Refeição 1',kind:'meal',meal:'r1'},
     {t:'12:30',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'14:00',ico:'📚',label:'Revisão espaçada',sub:'14h–15h30',kind:'study'},
-    {t:'16:00',ico:'🥚',label:'Lanche',kind:'meal',meal:'r3'},
+    {t:'16:00',ico:'🍌',label:'Lanche',kind:'meal',meal:'r3'},
     {t:'17:00',ico:'📚',label:'Bloco noite (opcional)',sub:'17h–18h30 · sem culpa se pular',kind:'study',opt:true},
     {t:'19:30',ico:'🏐',label:'Futevôlei',sub:'19h30–20h30',kind:'sport'},
     {t:'21:00',ico:'🍽️',label:'Jantar leve',sub:'pós-futevôlei',kind:'meal',meal:'r4'},
@@ -406,7 +438,7 @@ const TL={
     {t:'11:00',ico:'🍳',label:'Refeição 1',kind:'meal',meal:'r1'},
     {t:'12:30',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'13:00',ico:'📚',label:'Preparação pra aula',sub:'13h–14h30 · relê P1, anota 3 perguntas',kind:'study'},
-    {t:'16:00',ico:'🥚',label:'Lanche (adiantar + reforçar)',sub:'jantar vai ser tarde',kind:'meal',meal:'r3'},
+    {t:'16:00',ico:'🍌',label:'Lanche (adiantar + reforçar)',sub:'jantar vai ser tarde',kind:'meal',meal:'r3'},
     {t:'17:00',ico:'🎾',label:'Beach tennis',sub:'17h–18h · leva muda de roupa na bolsa!',kind:'sport'},
     {t:'18:30',ico:'🍽️',label:'Jantar ENTRE treino e aula',sub:'⚠️ come agora ou leva pronto pra pausa da aula',kind:'meal',meal:'r4',warn:true},
     {t:'19:00',ico:'🎓',label:'Aula de fotografia',sub:'19h–22h',kind:'class'},
@@ -420,7 +452,7 @@ const TL={
     {t:'12:00',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'13:00',ico:'📚',label:'Estudo principal',sub:'13h–15h · sagrado',kind:'study'},
     {t:'16:00',ico:'📚',label:'Revisão espaçada',sub:'16h–17h30',kind:'study'},
-    {t:'16:05',ico:'🥚',label:'Lanche',kind:'meal',meal:'r3'},
+    {t:'16:05',ico:'🍌',label:'Lanche',kind:'meal',meal:'r3'},
     {t:'17:30',ico:'🟢',label:'Noite livre',kind:'free'},
     {t:'19:30',ico:'🏐',label:'Futevôlei',sub:'19h30–20h30',kind:'sport'},
     {t:'21:00',ico:'🍽️',label:'Jantar leve',kind:'meal',meal:'r4'},
@@ -433,7 +465,7 @@ const TL={
     {t:'11:15',ico:'📚',label:'Microbloco de estudo',sub:'11h15–12h',kind:'study'},
     {t:'12:00',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'13:00',ico:'📚',label:'Estudo principal',sub:'13h–15h',kind:'study'},
-    {t:'16:00',ico:'🥚',label:'Lanche (reforçar)',kind:'meal',meal:'r3'},
+    {t:'16:00',ico:'🍌',label:'Lanche (reforçar)',kind:'meal',meal:'r3'},
     {t:'16:30',ico:'📚',label:'Preparação pra aula',sub:'16h30–17h30',kind:'study'},
     {t:'17:30',ico:'🍽️',label:'Jantar cedo',sub:'⚠️ 17h30–18h30, antes da aula',kind:'meal',meal:'r4',warn:true},
     {t:'19:00',ico:'🎓',label:'Aula de fotografia',sub:'19h–22h · dia mais pesado da semana',kind:'class'},
@@ -445,7 +477,7 @@ const TL={
     {t:'11:00',ico:'🍳',label:'Refeição 1',kind:'meal',meal:'r1'},
     {t:'12:30',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'14:00',ico:'📚',label:'Revisão espaçada',sub:'14h–15h30',kind:'study'},
-    {t:'16:00',ico:'🥚',label:'Lanche',kind:'meal',meal:'r3'},
+    {t:'16:00',ico:'🍌',label:'Lanche',kind:'meal',meal:'r3'},
     {t:'17:00',ico:'📚',label:'Bloco noite (opcional)',kind:'study',opt:true},
     {t:'18:00',ico:'💪',label:'Calistenia',sub:'dia livre de esporte — bom pra força',kind:'cal'},
     {t:'20:00',ico:'🍽️',label:'Jantar',kind:'meal',meal:'r4'},
@@ -456,8 +488,8 @@ const TL={
     {t:'11:00',ico:'🍳',label:'Refeição 1',kind:'meal',meal:'r1'},
     {t:'12:30',ico:'🍽️',label:'Almoço',kind:'meal',meal:'r2'},
     {t:'13:00',ico:'🌿',label:'Folga do estudo · dia da Larissa',sub:'nada de /estudo. sábado protege a semana',kind:'free'},
-    {t:'15:00',ico:'🍱',label:'Adiantar comida da semana',sub:'frango desfiado, ovos cozidos prontos',kind:'free'},
-    {t:'16:00',ico:'🥚',label:'Lanche',kind:'meal',meal:'r3'},
+    {t:'15:00',ico:'🍱',label:'Adiantar comida da semana',sub:'porções de tilápia/alcatra e ovos cozidos prontos',kind:'free'},
+    {t:'16:00',ico:'🍌',label:'Lanche',kind:'meal',meal:'r3'},
     {t:'17:00',ico:'💪',label:'Calistenia',sub:'bom dia pra força',kind:'cal'},
     {t:'20:00',ico:'🍽️',label:'Jantar',kind:'meal',meal:'r4'},
     {t:'23:30',ico:'😴',label:'Dormir',kind:'sleep'},
@@ -468,7 +500,7 @@ const TL={
     {t:'11:00',ico:'🍳',label:'Refeição 1',kind:'meal',meal:'r1'},
     {t:'12:00',ico:'🍽️',label:'Almoço junto',sub:'12h–13h30',kind:'meal',meal:'r2'},
     {t:'14:00',ico:'📚',label:'Exercício prático c/ Tika',sub:'14h–16h',kind:'study'},
-    {t:'16:00',ico:'🥚',label:'Lanche',kind:'meal',meal:'r3'},
+    {t:'16:00',ico:'🍌',label:'Lanche',kind:'meal',meal:'r3'},
     {t:'17:00',ico:'💪',label:'Calistenia',kind:'cal'},
     {t:'20:00',ico:'🍽️',label:'Jantar',kind:'meal',meal:'r4'},
     {t:'23:30',ico:'😴',label:'Dormir',kind:'sleep'},
@@ -481,7 +513,7 @@ const DAYNOTE={
   qua:{txt:'Beach de manhã → <b>açaí PURO + whey</b> (substitui R1) → bloco de estudo sagrado 13h → futevôlei à noite.'},
   qui:{warn:true,txt:'<b>Dia mais pesado.</b> Beach 9h30 + aula 19–22h. Reforça o lanche e <b>janta cedo (17h30)</b>. Sexta vem leve de propósito.'},
   sex:{txt:'Dia pesado de estudo, sem esporte. <b>Bom dia pra calistenia</b> e pra descansar à noite.'},
-  sab:{txt:'<b>Folga formal do estudo</b> (dia da Larissa). Calistenia + adiantar comida da semana.'},
+  sab:{txt:'<b>Folga formal do estudo</b> (dia da Larissa). Calistenia + adiantar comida da semana (porções de proteína, ovos).'},
   dom:{txt:'<b>Estudo com o Tika 9h–16h</b> (5h em dupla). Calistenia à tarde. Foto mensal se virou o mês.'},
 };
 
@@ -491,7 +523,7 @@ const VESPERA={
   qua:{txt:'tem <b>beach 9h30</b>: pós-treino só <b>açaí puro 200g + whey</b> (= R1). E futevôlei à noite.'},
   qui:{warn:true,txt:'é <b>QUINTA (dia mais pesado)</b>: beach 9h30 + aula 19–22h. Adianta o lanche e janta cedo (17h30).'},
   sex:{txt:'é dia leve + <b>bom pra calistenia</b>. Sem esporte à noite.'},
-  sab:{txt:'é <b>sábado (folga)</b>: dia da Larissa. Bom pra adiantar comida da semana (frango desfiado, ovos).'},
+  sab:{txt:'é <b>sábado (folga)</b>: dia da Larissa. Bom pra adiantar comida da semana (porções de proteína, ovos cozidos).'},
   dom:{txt:'é <b>domingo</b>: estudo com o Tika 9h–16h. Foto mensal se virou o mês.'},
 };
 
@@ -504,13 +536,37 @@ const CALISTENIA=[
   {id:'barra',n:'Barra fixa',meta:'3× máx',prog:'Sem barra? Remada na mesa. Difícil? Negativas (sobe pulando, desce devagar).'},
 ];
 
-const SHOPPING=[
-  {cat:'Proteína',items:[['Ovos','~2½ dúzias'],['Frango (peito/desfiar)','~1 kg'],['Carne vermelha magra (patinho/alcatra)','~1 kg'],['Peixe (opção)','a gosto'],['Atum em lata (plano B)','3 latas'],['Whey','—']]},
-  {cat:'Laticínios',items:[['Iogurte natural 170g','12 potes']]},
-  {cat:'Carbo',items:[['Arroz','meio pacote'],['Feijão','meio pacote'],['Batata-doce / abóbora','~700 g'],['Cuscuz (flocão)','1 pacote'],['Pão integral (plano B)','1 pacote']]},
-  {cat:'Hortifrúti',items:[['Banana','1 cacho'],['Frutas vermelhas congeladas','1 pacote'],['Fruta variada (maçã/laranja)','semana'],['Folhas (alface/rúcula)','semana'],['Tomate','semana'],['Brócolis / couve-flor','semana'],['Legumes variados','semana']]},
-  {cat:'Extras',items:[['Azeite de oliva','1 (dura)'],['Açaí puro (qua/qui)','2 porções'],['Café / chá','—']]},
+const PROT_FOODS=[
+  {n:'Whey · 1 scoop',g:25},{n:'1 ovo',g:6},{n:'2 ovos',g:12},{n:'3 ovos',g:18},
+  {n:'Iogurte natural 170g',g:6},{n:'Tilápia 130g',g:26},{n:'Alcatra 130g',g:32},
+  {n:'Queijo minas/coalho · fatia',g:7},{n:'Leite 200ml',g:6},{n:'Açaí 200g',g:3},
 ];
+
+/* ESTOQUE: u=unidade, wk=consumo/semana, bw=semanas de compra, fresh=perecível, star=destaque */
+const INV=[
+  {n:'Ovos',cat:'Proteína',u:'un',wk:30,bw:1.5,fresh:false},
+  {n:'Tilápia (filé)',cat:'Proteína',u:'porções 130g',wk:7,bw:1,fresh:true},
+  {n:'Alcatra',cat:'Proteína',u:'porções 130g',wk:7,bw:1,fresh:true},
+  {n:'Whey',cat:'Proteína',u:'pote',wk:0.25,bw:4,fresh:false},
+  {n:'Iogurte natural 170g',cat:'Laticínios',u:'potes',wk:12,bw:1,fresh:true},
+  {n:'Queijo minas/coalho',cat:'Laticínios',u:'fatias',wk:5,bw:1,fresh:true},
+  {n:'Arroz',cat:'Carbo',u:'pacote 1kg',wk:0.6,bw:3,fresh:false},
+  {n:'Feijão',cat:'Carbo',u:'pacote 1kg',wk:0.5,bw:3,fresh:false},
+  {n:'Batata-doce',cat:'Carbo',u:'un',wk:5,bw:1,fresh:true},
+  {n:'Cuscuz (flocão)',cat:'Carbo',u:'pacote',wk:0.3,bw:3,fresh:false},
+  {n:'Pão integral',cat:'Carbo',u:'pacote',wk:1,bw:1,fresh:true},
+  {n:'Banana',cat:'Frutas',u:'un',wk:14,bw:0.5,fresh:true,star:true},
+  {n:'Frutas vermelhas congeladas',cat:'Frutas',u:'pacote',wk:0.5,bw:2,fresh:false},
+  {n:'Fruta variada (maçã/laranja)',cat:'Frutas',u:'un',wk:4,bw:1,fresh:true},
+  {n:'Folhas (alface/rúcula)',cat:'Hortifrúti',u:'maços',wk:3,bw:0.5,fresh:true},
+  {n:'Tomate',cat:'Hortifrúti',u:'un',wk:6,bw:1,fresh:true},
+  {n:'Brócolis / couve-flor',cat:'Hortifrúti',u:'un',wk:2,bw:1,fresh:true},
+  {n:'Legumes variados',cat:'Hortifrúti',u:'cesta',wk:1,bw:1,fresh:true},
+  {n:'Açaí puro',cat:'Extras',u:'porções 200g',wk:2,bw:2,fresh:true},
+  {n:'Azeite de oliva',cat:'Extras',u:'garrafa',wk:0.2,bw:4,fresh:false},
+  {n:'Café / chá',cat:'Extras',u:'pacote',wk:0.2,bw:4,fresh:false},
+];
+const CAT_ORDER=['Proteína','Laticínios','Carbo','Frutas','Hortifrúti','Extras'];
 
 /* ---------- ESTADO ---------- */
 let DB=load();
@@ -518,12 +574,13 @@ function load(){
   let d=null; try{d=JSON.parse(localStorage.getItem(LS))}catch(e){}
   if(!d||!d.days)d={days:{},metrics:[],created:today()};
   if(!d.settings)d.settings={wakeTarget:'07:30',sleepTarget:'23:30'};
-  if(!d.shopping)d.shopping={};
+  if(!d.inventory)d.inventory={};
   return d;
 }
 function save(){try{localStorage.setItem(LS,JSON.stringify(DB))}catch(e){}}
 function today(){return new Date().toISOString().slice(0,10)}
 function addDaysStr(base,n){const d=new Date(base+'T12:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function dmShort(s){return s.split('-').reverse().slice(0,2).join('/')}
 function dowOf(s){return DOW[new Date(s+'T12:00').getDay()]}
 function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
 function hmToMin(s){if(!s)return null;const p=s.split(':');return (+p[0])*60+(+p[1])}
@@ -543,13 +600,34 @@ function dayScore(dstr){
   return Math.round((meals*0.45+water*0.2+moved*0.2+woke*0.15)*100);
 }
 
+/* ---------- ESTOQUE helpers ---------- */
+function inv(name){if(!DB.inventory[name])DB.inventory[name]={stock:0,lastBought:null,lastQty:0};return DB.inventory[name];}
+function invDef(name){return INV.find(x=>x.n===name);}
+function invState(it){
+  const s=inv(it.n),stock=s.stock||0,dayNeed=it.wk/7;
+  const daysLeft=dayNeed>0?stock/dayNeed:999;
+  let status='ok',buy=0;
+  if(stock<=0)status='acabou';else if(daysLeft<4)status='comprar';else if(daysLeft<=10)status='ok';else status='sobra';
+  if(status==='acabou'||status==='comprar')buy=Math.max(1,Math.ceil(it.wk*it.bw-stock));
+  return {stock,daysLeft,status,buy};
+}
+function invStarted(){return Object.values(DB.inventory).some(s=>(s.stock>0)||s.lastBought);}
+function proteinInStock(){return inv('Tilápia (filé)').stock>0||inv('Alcatra').stock>0;}
+function mealWarn(mealId){
+  if(!invStarted())return null;
+  if((mealId==='r2'||mealId==='r4')&&!proteinInStock())return 'tilápia/alcatra em falta → Plano B ou repõe';
+  if((mealId==='r1'||mealId==='r3')&&inv('Ovos').stock<=0)return 'ovos em falta → repõe';
+  return null;
+}
+
 /* ---------- HOJE ---------- */
 function renderHoje(){
   const t=today(),dw=dowOf(t),o=day(t);
-  document.getElementById('hojeKicker').textContent=DOW_FULL[dw]+' · '+t.split('-').reverse().slice(0,2).join('/');
+  document.getElementById('hojeKicker').textContent=DOW_FULL[dw]+' · '+dmShort(t);
   document.getElementById('streakNum').textContent=computeStreak();
   const tomo=dowOf(addDaysStr(t,1)),v=VESPERA[tomo];
   document.getElementById('vespera').innerHTML=`<div class="banner ${v.warn?'warn':''}"><div class="bk">🌙 amanhã (${DOW_FULL[tomo]})</div><div class="bt">Amanhã ${v.txt}</div></div>`;
+  renderInvAlert();
   const liters=o.water*WATER_GLASS;
   document.getElementById('waterL').textContent=liters.toFixed(1).replace('.',',');
   document.getElementById('waterBar').style.width=Math.min(100,o.water/GLASS_GOAL*100)+'%';
@@ -566,11 +644,21 @@ function renderHoje(){
   cb.className='bigbtn '+(o.closed?'done':'ghost');
   cb.textContent=o.closed?'✓ Dia fechado e registrado':'🌙 Fechar o dia';
 }
+function renderInvAlert(){
+  const host=document.getElementById('invAlert');
+  if(!invStarted()){host.innerHTML='';return;}
+  let msgs=[];
+  if(inv('Ovos').stock<=0)msgs.push('ovos');
+  if(inv('Tilápia (filé)').stock<=0&&inv('Alcatra').stock<=0)msgs.push('tilápia/alcatra');
+  if(inv('Banana').stock<=0)msgs.push('banana');
+  if(inv('Iogurte natural 170g').stock<=0)msgs.push('iogurte');
+  if(!msgs.length){host.innerHTML='';return;}
+  host.innerHTML=`<div class="banner alert"><div class="bk">⚠️ estoque acabou</div><div class="bt">Acabou: <b>${msgs.join(', ')}</b>. Repõe na aba Compras (ou usa o Plano B do jantar).</div></div>`;
+}
 function setAcc(id,val,target){
   const el=document.getElementById(id);
   if(!val){el.textContent='—';el.className='at none';return;}
-  el.textContent=val;
-  el.className='at '+((hmToMin(val)-hmToMin(target))<=30?'ok':'late');
+  el.textContent=val;el.className='at '+((hmToMin(val)-hmToMin(target))<=30?'ok':'late');
 }
 function renderTimeline(dw,o){
   const now=nowMin();let curIdx=-1;
@@ -581,16 +669,14 @@ function renderTimeline(dw,o){
     const checkable=['meal','sport','study','class','cal'].includes(b.kind);
     const done=!!o.checks[id];
     const isNow=i===curIdx;
-    let sub=b.sub||'',prot='';
-    if(b.kind==='meal'){const m=MEALS[b.meal];prot=`<div class="prot">${m.prot}g proteína · ${m.itens}</div>`;}
+    let sub=b.sub||'',prot='',sw='';
+    if(b.kind==='meal'){const m=MEALS[b.meal];prot=`<div class="prot">${m.prot}g proteína · ${m.itens}</div>`;const w=mealWarn(b.meal);if(w)sw=`<div class="stockw">⚠ ${w}</div>`;}
     const el=document.createElement('div');
     el.className='tl-item k-'+b.kind+(done?' done':'')+(isNow?' now':'')+(b.warn?' warn':'')+(b.opt?' opt':'')+(checkable?'':' noclick');
     el.innerHTML=`<div class="tl-time">${b.t}${isNow?'<br><span class="now-tag">agora</span>':''}</div>
       <div class="tl-node"><div class="dot">${b.ico}</div></div>
-      <div class="tl-card"><div class="lab">${b.label}${checkable?'<span class="ck">✓</span>':''}</div>${sub?`<div class="sub">${sub}</div>`:''}${prot}</div>`;
-    if(checkable){
-      el.onclick=()=>{ if(b.kind==='cal'){openCalistenia();return;} o.checks[id]=!o.checks[id];save();renderHoje(); };
-    }
+      <div class="tl-card"><div class="lab">${b.label}${checkable?'<span class="ck">✓</span>':''}</div>${sub?`<div class="sub">${sub}</div>`:''}${prot}${sw}</div>`;
+    if(checkable){el.onclick=()=>{ if(b.kind==='cal'){openCalistenia();return;} o.checks[id]=!o.checks[id];save();renderHoje(); };}
     wrap.appendChild(el);
   });
 }
@@ -605,6 +691,21 @@ function computeStreak(){
   }
   return s;
 }
+
+/* ---------- PROTEÍNA picker ---------- */
+function openProtein(){
+  const o=day();
+  const chips=PROT_FOODS.map(f=>`<button class="pchip" onclick="addProt(${f.g})">${f.n}<small>+${f.g}</small></button>`).join('');
+  openSheet(`<span class="sclose" onclick="closeSheet()">fechar ✕</span><h3>🥩 Registrar proteína</h3>
+    <div class="ssub">Hoje: <b style="color:var(--purple)">${proteinOf(today())}g</b> de ${PROT_GOAL}g. As refeições marcadas já contam sozinhas — aqui você soma <b>extras</b> (shake, lanche proteico...).</div>
+    <div class="pgrid">${chips}</div>
+    <div class="fld" style="margin-top:4px"><label>Outro valor (g)</label><input id="protCustom" type="number" inputmode="numeric" placeholder="ex 40"></div>
+    <button class="bigbtn acc" onclick="addProtCustom()">Adicionar valor</button>
+    <button class="bigbtn ghost" onclick="resetProt()">Zerar extras de hoje (${o.protExtra||0}g)</button>`);
+}
+function addProt(g){day().protExtra+=g;save();renderHoje();openProtein();toast('+'+g+'g proteína');}
+function addProtCustom(){const v=parseFloat(document.getElementById('protCustom').value);if(isNaN(v)||v<=0){toast('Valor inválido');return;}day().protExtra+=Math.round(v);save();renderHoje();closeSheet();toast('+'+Math.round(v)+'g proteína');}
+function resetProt(){day().protExtra=0;save();renderHoje();closeSheet();toast('Extras zerados');}
 
 /* ---------- SEMANA ---------- */
 let selDay=dowOf(today());
@@ -625,7 +726,8 @@ function renderSemana(){
     <div class="dtype">${DAYTYPE[selDay]}</div>${rows}
     <div class="daynote ${n.warn?'warn':''}">${n.txt}</div></div>`;
   const wm=document.getElementById('weekMeals');wm.innerHTML='';
-  ['r1','r2','r3','r4'].forEach(id=>{const m=MEALS[id];wm.innerHTML+=`<div class="mealrow"><div class="mn">${m.nome}<span class="hr">${m.prot}g prot</span></div><div class="mi">${m.itens}</div></div>`;});
+  ['r1','r2','r3','r4'].forEach(id=>{const m=MEALS[id];const w=mealWarn(id);
+    wm.innerHTML+=`<div class="mealrow"><div class="mn">${m.nome}<span class="hr">${m.prot}g prot</span></div><div class="mi">${m.itens}</div>${w?`<div class="mw">⚠ ${w}</div>`:''}</div>`;});
 }
 
 /* ---------- CALISTENIA ---------- */
@@ -689,20 +791,55 @@ function closeDay(){
   openSheet(html);renderHoje();
 }
 
-/* ---------- COMPRAS ---------- */
+/* ---------- COMPRAS / ESTOQUE ---------- */
 function renderCompras(){
-  const wrap=document.getElementById('shopList');wrap.innerHTML='';let total=0,got=0;
-  SHOPPING.forEach(g=>{
-    wrap.innerHTML+=`<div class="shop-cat">${g.cat}</div>`;
-    g.items.forEach(it=>{total++;const key=it[0];const on=!!DB.shopping[key];if(on)got++;
-      const el=document.createElement('div');el.className='shop-item'+(on?' got':'');
-      el.innerHTML=`<div class="box">✓</div><div class="sn">${it[0]}</div><div class="sq">${it[1]}</div>`;
-      el.onclick=()=>{DB.shopping[key]=!DB.shopping[key];save();renderCompras();};
+  const needs=INV.map(it=>({it,st:invState(it)})).filter(x=>x.st.status==='acabou'||x.st.status==='comprar')
+    .sort((a,b)=>a.st.daysLeft-b.st.daysLeft);
+  let nP=0,nOk=0;INV.forEach(it=>{const s=invState(it).status;if(s==='acabou'||s==='comprar')nP++;else nOk++;});
+  const bn=document.getElementById('buyNow');
+  if(!needs.length)bn.innerHTML=`<div class="buy-empty">✓ Tudo abastecido. Nada pra comprar agora.</div>`;
+  else bn.innerHTML=needs.map(x=>{
+    const urgent=x.st.status==='acabou';
+    const date=urgent?'HOJE':'até '+dmShort(addDaysStr(today(),Math.max(0,Math.floor(x.st.daysLeft))));
+    return `<div class="buy-row ${urgent?'urgent':''}"><span class="bn">${x.it.star?'🍌 ':''}${x.it.n}</span><span class="bq">~${x.st.buy} ${x.it.u} · ${date}</span></div>`;
+  }).join('');
+  document.getElementById('buyCount').textContent=needs.length?needs.length+' itens':'tudo ok';
+  document.getElementById('shopSummary').textContent=`${nP} precisam · ${nOk} abastecidos`;
+  const wrap=document.getElementById('invList');wrap.innerHTML='';
+  CAT_ORDER.forEach(cat=>{
+    const items=INV.filter(it=>it.cat===cat);if(!items.length)return;
+    wrap.innerHTML+=`<div class="shop-cat">${cat}</div>`;
+    items.forEach(it=>{
+      const st=invState(it),s=inv(it.n);
+      const col=st.status==='acabou'?'var(--red)':st.status==='comprar'?'var(--amber)':st.status==='ok'?'var(--acc)':'var(--acc-dim)';
+      const pill=st.status==='acabou'?`<span class="pill red">acabou</span>`:st.status==='comprar'?`<span class="pill amber">comprar ${st.buy}</span>`:st.status==='ok'?`<span class="pill green">ok</span>`:`<span class="pill dim">de sobra</span>`;
+      const dur=st.stock<=0?'sem estoque':(it.wk>0?`dura ~${Math.round(st.daysLeft)}d`:'estoque ok');
+      const el=document.createElement('div');el.className='inv-item';
+      el.innerHTML=`<div class="idot" style="background:${col}"></div>
+        <div class="ib"><div class="iname">${it.star?'🍌 ':''}${it.n}</div>
+        <div class="imeta">tem ${fmtNum(st.stock)} ${it.u} · ${dur}${it.fresh?' · 🧊':''}</div>
+        <div class="ilast">${s.lastBought?'comprado '+dmShort(s.lastBought):'nunca comprado'}</div></div>
+        <div class="iright">${pill}</div>`;
+      el.onclick=()=>openInvSheet(it.n);
       wrap.appendChild(el);
     });
   });
-  document.getElementById('shopCount').textContent=got+'/'+total+' marcados';
 }
+function fmtNum(n){return Number.isInteger(n)?n:n.toFixed(1).replace('.',',');}
+function openInvSheet(name){
+  const it=invDef(name),s=inv(name),st=invState(it);
+  const until=st.stock>0&&it.wk>0?` (acaba ~${dmShort(addDaysStr(today(),Math.floor(st.daysLeft)))})`:'';
+  openSheet(`<span class="sclose" onclick="closeSheet()">fechar ✕</span><h3>${it.star?'🍌 ':''}${it.n}</h3>
+    <div class="ssub">${it.cat} · gasta ~${fmtNum(it.wk)} ${it.u}/semana${it.fresh?' · 🧊 perecível':''}</div>
+    <div class="invstock"><button onclick="invAdj('${name}',-1)">−</button><div class="isv"><span>${fmtNum(s.stock)}</span><small>${it.u} em casa</small></div><button onclick="invAdj('${name}',1)">＋</button></div>
+    <div class="invinfo">${st.stock>0?(it.wk>0?`Dura ~<b>${Math.round(st.daysLeft)} dias</b>${until}`:'Estoque ok'):'<b style="color:var(--red)">Sem estoque</b>'} · última compra: ${s.lastBought?dmShort(s.lastBought)+(s.lastQty?' ('+fmtNum(s.lastQty)+')':''):'nunca'}</div>
+    <div class="fld" style="margin-top:12px"><label>Comprei agora (quantidade)</label><input id="buyQty" type="number" inputmode="decimal" value="${st.buy||it.wk}"></div>
+    <button class="bigbtn acc" onclick="invBuy('${name}')">✅ Registrar compra de hoje</button>
+    <button class="bigbtn danger" onclick="invZero('${name}')">🗑️ Acabou / estragou — marcar 0</button>`);
+}
+function invAdj(name,d){const s=inv(name);s.stock=Math.max(0,Math.round(((s.stock||0)+d)*10)/10);save();openInvSheet(name);renderCompras();}
+function invBuy(name){const q=parseFloat((document.getElementById('buyQty').value||'').replace(',','.'));if(isNaN(q)||q<=0){toast('Quantidade inválida');return;}const s=inv(name);s.stock=Math.round(((s.stock||0)+q)*10)/10;s.lastBought=today();s.lastQty=q;save();closeSheet();renderCompras();toast('Compra registrada ✓');}
+function invZero(name){const s=inv(name);s.stock=0;save();closeSheet();renderCompras();toast(name+' zerado');}
 
 /* ---------- CALENDÁRIO ---------- */
 let calRef=new Date();
@@ -812,13 +949,12 @@ let toastT;function toast(m){const t=document.getElementById('toast');t.textCont
 /* ---------- BINDS ---------- */
 document.getElementById('waterPlus').onclick=()=>{day().water++;save();renderHoje();};
 document.getElementById('waterMinus').onclick=()=>{const o=day();o.water=Math.max(0,o.water-1);save();renderHoje();};
-document.querySelectorAll('.protadd button').forEach(b=>b.onclick=()=>{day().protExtra+=+b.dataset.p;save();renderHoje();toast('+'+b.dataset.p+'g proteína');});
+document.getElementById('protLog').onclick=openProtein;
 document.getElementById('hungerBtn').onclick=openHunger;
 document.getElementById('wakeSet').onclick=()=>openTimePick('woke');
 document.getElementById('sleepSet').onclick=()=>openTimePick('slept');
 document.getElementById('closeDayBtn').onclick=closeDay;
 document.getElementById('forceCard').onclick=openCalistenia;
-document.getElementById('shopClear').onclick=()=>{DB.shopping={};save();renderCompras();toast('Lista limpa');};
 document.getElementById('calPrev').onclick=()=>{calRef.setMonth(calRef.getMonth()-1);renderMes();};
 document.getElementById('calNext').onclick=()=>{calRef.setMonth(calRef.getMonth()+1);renderMes();};
 document.getElementById('saveMetric').onclick=()=>{
