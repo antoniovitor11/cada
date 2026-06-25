@@ -120,6 +120,25 @@
   .note{font-size:11.5px;color:var(--mut);line-height:1.5;background:var(--card);border:1px solid var(--line);
     border-radius:12px;padding:11px;margin-bottom:14px}
   .sech{font-size:13px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:18px 2px 10px}
+  /* tier badge */
+  .tier{min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:18px;color:#06122c;margin-left:8px}
+  /* score breakdown bars */
+  .bdwrap{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+  .bd .bdl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-bottom:3px}
+  .bd .bdl span{color:var(--txt);font-weight:700}
+  .bdbar{height:6px;border-radius:5px;background:#0a1226;overflow:hidden;border:1px solid var(--line)}
+  .bdbar i{display:block;height:100%}
+  .cc.unk{outline:2px dashed var(--orange);outline-offset:-2px}
+  .diagbtn{background:none;border:1px solid var(--line);color:var(--mut);border-radius:10px;
+    padding:8px 11px;font-size:12px;font-weight:600;margin-bottom:14px}
+  #diagBox{background:#0a1226;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;
+    font-size:11.5px;line-height:1.7;color:var(--mut)}
+  #diagBox b{color:var(--gold)}
+  #diagBox pre{white-space:pre-wrap;word-break:break-all;background:#070d1c;border:1px solid var(--line);
+    border-radius:8px;padding:8px;color:var(--green);font-size:10.5px;max-height:260px;overflow:auto;margin:6px 0 0}
+  .offbanner{background:rgba(255,159,67,.15);border:1px solid var(--orange);color:var(--orange);
+    border-radius:11px;padding:9px 11px;font-size:12.5px;font-weight:600;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -179,6 +198,9 @@
       </div>
     </div>
     <div class="chips" id="pChips"></div>
+    <div id="offBanner" class="offbanner hidden"></div>
+    <button class="diagbtn" onclick="toggleDiag()">🔍 Verificar dados ao vivo (diagnóstico)</button>
+    <div id="diagBox" class="hidden"></div>
 
     <div class="tabs">
       <div class="tab active" id="tabDecks" onclick="showTab('decks')">Decks pra mim</div>
@@ -187,7 +209,7 @@
 
     <!-- DECKS TAB -->
     <div id="decksView">
-      <div class="note">As notas e a <b>chance estimada</b> são calculadas pelo app a partir do equilíbrio do deck, semelhança com arquétipos meta e os <b>seus níveis de carta</b>. É uma estimativa fundamentada — não uma taxa de vitória oficial de batalhas.</div>
+      <div class="note">A <b>nota /100</b> e o <b>tier (S–D)</b> medem a qualidade do deck por critérios transparentes (veja as barras): estrutura, curva de elixir, fidelidade ao meta e nível das cartas. <b>Prontidão %</b> é real: o quão maxado o deck está. <b>Não</b> exibo "chance de vitória" porque a API oficial não fornece taxa de batalhas — seria um número inventado. Borda <span style="color:var(--orange)">tracejada</span> = carta que o motor ainda não cataloga.</div>
       <div class="filters">
         <select id="fStyle" onchange="renderDecks()">
           <option value="all">Todos os estilos</option>
@@ -238,7 +260,11 @@ const PROXY = "https://proxy.royaleapi.dev/v1";
 const LS = { key:"cr_key", tag:"cr_tag" };
 let CFG = { key:localStorage.getItem(LS.key)||"", tag:localStorage.getItem(LS.tag)||"" };
 let PLAYER = null;      // raw player object
-let OWNED = {};         // normName -> {name, level, maxLevel, elixir, evo, icon, rarity}
+let OWNED = {};         // normName -> {name, level, maxLevel, elixir, ...}
+let MAXD = 15;          // detected unified level cap
+let UNKNOWN = [];       // card names not in the role database
+let LAST_FETCH = "";    // human label of last data timestamp
+let OFFLINE = false;    // true when serving cached data
 
 function $(id){return document.getElementById(id)}
 function show(v){["setupView","loadView","errView","mainView"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden")}
@@ -277,36 +303,68 @@ async function loadPlayer(){
     if(res.status===429) throw new Error("Muitas requisições (429). Espere alguns segundos e tente de novo.");
     if(!res.ok) throw new Error("Erro "+res.status+" ao buscar a conta.");
     PLAYER = await res.json();
+    OFFLINE = false;
+    try{ localStorage.setItem("cr_cache", JSON.stringify({t:Date.now(), p:PLAYER})); }catch(_){}
+    LAST_FETCH = "agora (ao vivo)";
     buildOwned();
     renderPlayer();
     show("mainView");
     showTab("decks");
   }catch(e){
-    $("errMsg").textContent = e.message || "Falha de conexão.";
+    // fallback to cached data so the app still opens offline / on API hiccups
+    const cached = localStorage.getItem("cr_cache");
+    if(cached){
+      try{
+        const c = JSON.parse(cached);
+        PLAYER = c.p; OFFLINE = true;
+        LAST_FETCH = "cache de " + new Date(c.t).toLocaleString("pt-BR");
+        buildOwned();
+        renderPlayer();
+        show("mainView");
+        showTab("decks");
+        return;
+      }catch(_){}
+    }
+    $("errMsg").textContent = (e.message||"Falha de conexão.") + " (sem cache disponível)";
     show("errView");
   }
 }
 
 function buildOwned(){
-  OWNED={};
+  OWNED={}; UNKNOWN=[];
   const all = (PLAYER.cards||[]);
+  // Detect the unified level cap: the API returns maxLevel relative to rarity
+  // (common=cap, rare=cap-2, epic=cap-5, legendary=cap-8, champion=cap-10).
+  // The highest maxLevel across the collection IS the in-game cap.
+  MAXD = all.reduce((m,c)=>Math.max(m, c.maxLevel||0), 0) || 15;
   all.forEach(c=>{
     const nn=norm(c.name);
-    const meta = CARD[nn] || {};
+    const meta = CARD[nn] || null;
+    if(!meta && c.name) UNKNOWN.push(c.name);
+    // Convert rarity-relative level to the unified in-game level shown in the app.
+    const disp = (MAXD - (c.maxLevel||MAXD)) + (c.level||0);
     OWNED[nn]={
       id:c.id,
       name:c.name,
-      level:c.level,
-      maxLevel:c.maxLevel,
-      elixir:(c.elixirCost!=null?c.elixirCost:(meta.e!=null?meta.e:4)),
-      evo:(c.evolutionLevel?c.evolutionLevel:0) || (c.maxEvolutionLevel?0:0),
-      hasEvo:!!c.evolutionLevel,
+      level:disp,                       // unified display level
+      maxLevel:MAXD,                    // unified cap
+      rawLevel:c.level, rawMax:c.maxLevel,
+      elixir:(c.elixirCost!=null?c.elixirCost:(meta&&meta.e!=null?meta.e:4)),
+      hasEvo:detectEvo(c),
+      known:!!meta,
       icon:(c.iconUrls&&(c.iconUrls.medium||c.iconUrls.evolutionMedium))||"",
-      evoIcon:(c.iconUrls&&c.iconUrls.evolutionMedium)||"",
-      rarity:c.rarity||meta.r||"common"
+      rarity:c.rarity||(meta&&meta.r)||"common"
     };
   });
-  // some accounts expose owned evolutions only via supportCards / separate flags; keep defensive
+}
+
+// Owned-evolution detection is defensive: the official API has shifted these
+// fields over time, so we accept any positive signal. The diagnostic panel
+// reports what was actually found so it can be verified live.
+function detectEvo(c){
+  if(c.evolutionLevel && c.evolutionLevel>0) return true;
+  if(c.evolution && c.evolution.level>0) return true;
+  return false;
 }
 
 /* normalize card names for matching */
@@ -328,6 +386,31 @@ function renderPlayer(){
   const owned=Object.keys(OWNED).length;
   chips.push(["Cartas",owned]);
   $("pChips").innerHTML = chips.map(c=>`<div class="chip"><span>${c[0]}</span> <b>${c[1]}</b></div>`).join("");
+  const ob=$("offBanner");
+  if(OFFLINE){ob.textContent="⚠️ Dados em cache ("+LAST_FETCH+"). Reabra com internet pra atualizar.";ob.classList.remove("hidden");}
+  else ob.classList.add("hidden");
+  $("diagBox").classList.add("hidden");
+}
+
+function toggleDiag(){
+  const box=$("diagBox");
+  if(!box.classList.contains("hidden")){box.classList.add("hidden");return;}
+  const cards=(PLAYER&&PLAYER.cards)||[];
+  const evoCount=Object.values(OWNED).filter(c=>c.hasEvo).length;
+  const sample=cards[0]||{};
+  // pick a non-common card to verify the level conversion is right
+  const owned=Object.values(OWNED);
+  const leg=owned.find(c=>c.rarity==="legendary")||owned.find(c=>c.rawMax<MAXD)||owned[0]||{};
+  box.innerHTML=
+    `<b>Conferência dos dados ao vivo</b> (pra você validar a honestidade do app):<br>`+
+    `• Cartas recebidas da API: <b>${cards.length}</b><br>`+
+    `• Cap de nível detectado: <b>${MAXD}</b><br>`+
+    `• Evoluções detectadas (campo da API): <b>${evoCount}</b>${evoCount?"":" — se você tem evoluções e aqui está 0, me avise: a API expõe por outro campo"}<br>`+
+    `• Cartas que o motor de decks NÃO conhece: <b>${UNKNOWN.length}</b>${UNKNOWN.length?": "+UNKNOWN.join(", "):" ✅"}<br>`+
+    `• Origem dos dados: <b>${LAST_FETCH||"ao vivo"}</b><br>`+
+    (leg.name?`<br><b>Exemplo de conversão de nível</b>: ${leg.name} — API nível ${leg.rawLevel}/${leg.rawMax} → exibido como <b>${leg.level}/${leg.maxLevel}</b> (confira no jogo se bate)<br>`:"")+
+    `<br><b>JSON cru de uma carta da API:</b><pre>${JSON.stringify(sample,null,1)}</pre>`;
+  box.classList.remove("hidden");
 }
 
 /* ============================================================
@@ -418,6 +501,16 @@ const CARD = {
   "mega knight":{e:7,roles:["win","tank","splash"]},
   "pekka":{e:7,roles:["miniTank","tank","support"]},
   "sparky":{e:6,roles:["splash","support"]},
+  // extra troops / fills
+  "mini pekka":{e:4,roles:["miniTank","support"]},
+  "giant skeleton":{e:6,roles:["miniTank","tank","support"]},
+  "cannon cart":{e:5,roles:["building","support"]},
+  "zappies":{e:4,roles:["air","support"]},
+  "battle healer":{e:4,roles:["miniTank","support"]},
+  "skeleton dragons":{e:4,roles:["air","splash"]},
+  "goblin demolisher":{e:4,roles:["building","splash","support"]},
+  "suspicious bush":{e:2,roles:["swarm","cycle"]},
+  "berserker":{e:2,roles:["miniTank","cycle"]},
   // tanks / mini tanks
   "ice golem":{e:2,roles:["miniTank","cycle"]},
   "knight":{e:3,roles:["miniTank","cycle"]},
@@ -562,15 +655,6 @@ const ARCH = [
    cards:["balloon","ice golem","skeletons","ice spirit","baby dragon","tombstone","fireball","the log"]}
 ];
 
-const ROLE_REQ = [
-  {role:"win", label:"Win condition", w:24},
-  {role:"air", label:"Defesa aérea", w:16},
-  {role:"splash", label:"Dano em área", w:12},
-  {role:"smallSpell", label:"Feitiço leve", w:11},
-  {role:"bigSpell", label:"Feitiço pesado", w:9},
-  {role:"cycle", label:"Cartas de ciclo", w:8}
-];
-
 function deckHas(deck,role){return deck.some(c=>roleSet(c.norm).includes(role))}
 function roleSet(nn){return (CARD[nn]&&CARD[nn].roles)||[]}
 
@@ -588,21 +672,24 @@ function buildDecks(){
       if(OWNED[nn] && !used.has(nn)){
         used.add(nn); deck.push(mkCard(nn,false));
       }else{
-        // substitute by primary role of the template card
-        const roles=roleSet(nn);
-        const sub=findSub(roles,used);
+        // substitute matching the template card's role + elixir
+        const meta=CARD[nn];
+        const roles=(meta&&meta.roles)||["support","cycle","air"];
+        const tElix=(meta&&meta.e)||3;
+        const sub=findSub(roles,tElix,used);
         if(sub){used.add(sub);deck.push(mkCard(sub,true));subs++;}
         else missing++;
       }
     });
     // fill to 8 if dedupe shrank it
     while(deck.length<8){
-      const sub=findSub(["support","cycle","air"],used);
+      const sub=findSub(["cycle","support","air"],3,used);
       if(!sub)break; used.add(sub); deck.push(mkCard(sub,true));
     }
     if(deck.length===8 && missing===0){
-      const sc=scoreDeck(deck,a,subs);
-      decks.push({arch:a,deck,subs,...sc});
+      const unknown=deck.filter(c=>!c.known).length;
+      const sc=scoreDeck(deck,a,subs,unknown);
+      decks.push({arch:a,deck,subs,unknown,...sc});
     }
   });
   // also a "best of your collection" generic deck if few archetypes matched
@@ -613,59 +700,85 @@ function buildDecks(){
 function mkCard(nn,isSub){
   const o=OWNED[nn];
   return {norm:nn,id:o.id,name:o.name,level:o.level,maxLevel:o.maxLevel,elixir:o.elixir,
-    hasEvo:o.hasEvo,icon:o.icon,sub:isSub};
+    hasEvo:o.hasEvo,known:o.known,icon:o.icon,sub:isSub};
 }
 
-function findSub(roles,used){
-  let best=null,bestLv=-1;
-  for(const nn in OWNED){
-    if(used.has(nn))continue;
-    const rs=roleSet(nn);
-    if(roles.some(r=>rs.includes(r))){
-      const lv=OWNED[nn].level;
-      if(lv>bestLv){bestLv=lv;best=nn;}
+// Substitution respects the role being filled AND the elixir curve, not just level.
+// Tries the primary role first; falls back to any of the card's roles.
+function findSub(roles,targetElixir,used){
+  const pick=(need)=>{
+    let best=null,bs=-1e9;
+    for(const nn in OWNED){
+      if(used.has(nn))continue;
+      const rs=roleSet(nn);
+      if(!need.some(r=>rs.includes(r)))continue;
+      const o=OWNED[nn];
+      // closeness in elixir matters most, then a small level nudge
+      let s = 100 - Math.abs(o.elixir-(targetElixir||3))*8 + o.level*1.2;
+      // avoid dumping a second win condition into a non-win slot
+      if(rs.includes("win") && !need.includes("win")) s-=25;
+      if(s>bs){bs=s;best=nn;}
     }
-  }
-  return best;
+    return best;
+  };
+  return pick([roles[0]]) || pick(roles);
 }
 
-function scoreDeck(deck,a,subs){
-  let score=0; const tags=[];
-  // 1) role coverage (up to 80)
-  ROLE_REQ.forEach(r=>{
-    if(deckHas(deck,r.role)){score+=r.w;tags.push({t:r.label,k:"ok"});}
-    else{tags.push({t:"sem "+r.label.toLowerCase(),k:r.role==="win"?"bad":"warn"});}
+// Ideal average elixir per style (used by the curve component).
+const STYLE_ELIX={cycle:3.0,siege:3.0,bait:3.4,bridge:3.7,control:3.6,beatdown:4.2};
+
+// Transparent scoring. Every point is explainable and reflects real
+// deckbuilding principles — there is NO invented "battle win rate".
+function scoreDeck(deck,a,subs,unknown){
+  const tags=[], breakdown=[];
+
+  // 1) STRUCTURE (0-50): does it cover the essential roles?
+  const SREQ=[
+    {role:"win",label:"Win condition",w:18,req:true},
+    {role:"air",label:"Defesa aérea",w:12},
+    {role:"splash",label:"Dano em área",w:8},
+    {role:"smallSpell",label:"Feitiço leve",w:7},
+    {role:"bigSpell",label:"Feitiço pesado",w:5}
+  ];
+  let structure=0;
+  SREQ.forEach(r=>{
+    if(deckHas(deck,r.role)){structure+=r.w;tags.push({t:r.label,k:"ok"});}
+    else tags.push({t:"sem "+r.label.toLowerCase(),k:r.req?"bad":"warn"});
   });
-  // 2) elixir balance (up to 12)
+  breakdown.push({label:"Estrutura",val:Math.round(structure),max:50});
+
+  // 2) ELIXIR CURVE (0-15): closeness to the style's ideal average
   const avg=deck.reduce((s,c)=>s+c.elixir,0)/8;
-  let elixScore=12-Math.min(12,Math.abs(avg-3.6)*4);
-  score+=Math.max(0,elixScore);
-  // 3) card levels vs 15 (up to 20)
+  const ideal=STYLE_ELIX[a.style]||3.6;
+  const curve=Math.max(0,15-Math.abs(avg-ideal)*5);
+  breakdown.push({label:"Curva de elixir",val:Math.round(curve),max:15});
+
+  // 3) META FIDELITY (0-20): how close to the proven archetype (subs/unknowns hurt)
+  const fidelity=Math.max(0,20 - subs*4 - unknown*5);
+  breakdown.push({label:"Fidelidade ao meta",val:fidelity,max:20});
+
+  // 4) CARD LEVELS (0-15): readiness for ladder, on the unified scale
   const avgLv=deck.reduce((s,c)=>s+c.level,0)/8;
-  const lvScore=Math.max(0,Math.min(20,(avgLv-8)/7*20));
-  score+=lvScore;
-  // 4) penalty for substitutions
-  score-=subs*4;
-  // 5) evolution bonus
+  const ready=Math.max(0,Math.min(15,(avgLv-(MAXD-7))/7*15));
+  breakdown.push({label:"Nível das cartas",val:Math.round(ready),max:15});
+
+  let score=Math.round(Math.max(0,Math.min(100,structure+curve+fidelity+ready)));
+
   const evos=deck.filter(c=>c.hasEvo).length;
-  score+=Math.min(8,evos*4);
   if(evos>0)tags.push({t:evos+" evolução"+(evos>1?"es":""),k:"ok"});
   if(subs>0)tags.push({t:subs+" substituição"+(subs>1?"es":""),k:"warn"});
+  if(unknown>0)tags.push({t:unknown+" carta fora do catálogo",k:"warn"});
 
-  score=Math.round(Math.max(0,Math.min(100,score)));
+  // readyPct is a REAL number: how maxed the deck is vs the cap
+  const readyPct=Math.round(avgLv/MAXD*100);
+  const tier = score>=85?"S":score>=72?"A":score>=58?"B":score>=44?"C":"D";
 
-  // estimated win chance: archetype base adjusted by your deck quality & levels
-  const qualityAdj=(score-65)/3;             // deck balance/levels push around base
-  const lvlAdj=(avgLv-13)*1.6;               // ladder level matters a lot
-  const subAdj=-subs*1.5;
-  let win=a.base+qualityAdj+lvlAdj+subAdj;
-  win=Math.max(38,Math.min(66,win));
-
-  return {score,win:Math.round(win),avg:avg.toFixed(1),avgLv:avgLv.toFixed(1),evos,tags};
+  return {score,tier,breakdown,avg:avg.toFixed(1),avgLv:avgLv.toFixed(1),readyPct,evos,tags};
 }
 
-function winColor(w){return w>=56?"var(--green)":w>=50?"var(--yellow)":w>=46?"var(--orange)":"var(--red)"}
-function scoreColor(s){return s>=80?"var(--green)":s>=65?"var(--yellow)":s>=50?"var(--orange)":"var(--red)"}
+function scoreColor(s){return s>=72?"var(--green)":s>=58?"var(--yellow)":s>=44?"var(--orange)":"var(--red)"}
+function tierColor(t){return t==="S"?"var(--gold)":t==="A"?"var(--green)":t==="B"?"var(--blue)":t==="C"?"var(--orange)":"var(--red)"}
+function barColor(r){return r>=.75?"var(--green)":r>=.5?"var(--yellow)":"var(--orange)"}
 
 let DECKS=[];
 function buildWinFilter(){
@@ -692,20 +805,26 @@ function renderDecks(){
 function deckCard(d){
   const cells=d.deck.map(c=>{
     const max=c.level>=c.maxLevel;
-    return `<div class="cc ${c.hasEvo?'evo':''} ${c.sub?'sub':''}">
+    return `<div class="cc ${c.hasEvo?'evo':''} ${c.sub?'sub':''} ${c.known?'':'unk'}">
       ${c.icon?`<img loading="lazy" src="${c.icon}" alt="${c.name}">`:''}
       ${c.hasEvo?'<div class="evob">EVO</div>':''}
       <div class="lv ${max?'max':''}">nv ${c.level}</div>
     </div>`;
   }).join("");
   const tags=d.tags.slice(0,7).map(t=>`<span class="t ${t.k}">${t.t}</span>`).join("");
-  const verdict = d.score>=80?"Excelente pra você":d.score>=65?"Bom deck":d.score>=50?"Jogável":"Fraco / faltam peças";
+  const bars=d.breakdown.map(b=>{
+    const r=b.val/b.max;
+    return `<div class="bd"><div class="bdl">${b.label}<span>${b.val}/${b.max}</span></div>
+      <div class="bdbar"><i style="width:${Math.round(r*100)}%;background:${barColor(r)}"></i></div></div>`;
+  }).join("");
+  const verdict = d.tier==="S"?"Excelente pra você":d.tier==="A"?"Muito bom":d.tier==="B"?"Bom / jogável":d.tier==="C"?"Mediano":"Faltam peças";
   return `<div class="deck">
     <div class="dh">
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="arch">${d.arch.name}</div>
         <div class="sub">${cap(d.arch.style)} · ${verdict}</div>
       </div>
+      <div class="tier" style="background:${tierColor(d.tier)}">${d.tier}</div>
       <div class="score">
         <div class="ring" style="color:${scoreColor(d.score)}">${d.score}</div>
         <div class="scl">nota /100</div>
@@ -713,11 +832,11 @@ function deckCard(d){
     </div>
     <div class="grid">${cells}</div>
     <div class="meta">
-      <div class="m">⚡ Elixir médio <b>${d.avg}</b></div>
-      <div class="m">📊 Nível médio <b>${d.avgLv}</b></div>
-      <div class="m">🏆 Chance estimada <b style="color:${winColor(d.win)}">${d.win}%</b></div>
+      <div class="m">⚡ Elixir <b>${d.avg}</b></div>
+      <div class="m">📊 Nível médio <b>${d.avgLv}/${MAXD}</b></div>
+      <div class="m">🔧 Prontidão <b>${d.readyPct}%</b></div>
     </div>
-    <div class="winbar"><i style="width:${Math.round((d.win-38)/(66-38)*100)}%;background:${winColor(d.win)}"></i></div>
+    <div class="bdwrap">${bars}</div>
     <div class="tags">${tags}</div>
     <button class="copybtn" onclick='copyDeck(${JSON.stringify(d.deck.map(c=>c.id))})'>📋 Copiar deck pro jogo</button>
   </div>`;
