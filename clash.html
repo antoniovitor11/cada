@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meu CR">
+<meta name="theme-color" content="#1b2a4a">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Meu Clash Royale</title>
+<style>
+  :root{
+    --bg:#0e1830; --bg2:#15244a; --card:#1b2a4a; --card2:#223563;
+    --line:#2c3f6e; --txt:#eaf0ff; --mut:#9fb0d6; --gold:#ffcb45;
+    --blue:#3a8bff; --green:#3ad07a; --yellow:#ffd23f; --orange:#ff9f43; --red:#ff5d5d;
+    --purple:#a06bff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:linear-gradient(180deg,#0c1426,#0e1830 40%,#0b1224);
+    color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    min-height:100vh;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:14px 14px 90px}
+  h1,h2,h3{margin:0}
+  .hidden{display:none!important}
+
+  /* Header */
+  .topbar{display:flex;align-items:center;gap:10px;padding:6px 2px 14px}
+  .topbar .logo{font-size:22px;font-weight:800;letter-spacing:.3px}
+  .topbar .logo span{color:var(--gold)}
+  .iconbtn{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:12px;padding:8px 10px;font-size:15px;font-weight:600}
+
+  /* Setup */
+  .setup{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+  .setup h2{font-size:19px;margin-bottom:6px}
+  .setup p{color:var(--mut);font-size:13.5px;line-height:1.5;margin:0 0 14px}
+  label{display:block;font-size:12.5px;color:var(--mut);margin:12px 0 6px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  input[type=text],input[type=password]{width:100%;background:var(--bg);border:1px solid var(--line);
+    color:var(--txt);border-radius:12px;padding:13px 14px;font-size:16px;outline:none}
+  input:focus{border-color:var(--blue)}
+  .btn{display:block;width:100%;border:none;border-radius:13px;padding:14px;font-size:16px;font-weight:800;
+    color:#06122c;background:linear-gradient(180deg,#ffd95e,#ffbe2e);margin-top:18px;box-shadow:0 4px 0 #b8851a}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #b8851a}
+  .btn.blue{color:#fff;background:linear-gradient(180deg,#4f9bff,#2f7bf0);box-shadow:0 4px 0 #1a4ea3}
+  .btn.ghost{color:var(--txt);background:var(--card2);box-shadow:0 4px 0 #14223f}
+  .help{font-size:12px;color:var(--mut);margin-top:14px;line-height:1.6;background:var(--bg);
+    border:1px solid var(--line);border-radius:12px;padding:12px}
+  .help b{color:var(--gold)}
+  .help code{background:#0a1226;padding:1px 6px;border-radius:6px;color:var(--green);font-size:11.5px}
+  .err{color:var(--red);font-size:13px;margin-top:10px;font-weight:600}
+
+  /* Player header card */
+  .phead{background:linear-gradient(135deg,#23386c,#172a52);border:1px solid var(--line);
+    border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .phead .nm{font-size:20px;font-weight:800;line-height:1.1}
+  .phead .tg{color:var(--mut);font-size:12.5px;margin-top:2px}
+  .phead .stat{margin-left:auto;text-align:right}
+  .phead .stat .big{font-size:22px;font-weight:800;color:var(--gold)}
+  .phead .stat .lbl{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px 11px;font-size:12.5px}
+  .chip b{color:var(--txt);font-weight:800}.chip span{color:var(--mut)}
+
+  /* Tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{flex:1;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:11px 6px;font-size:13.5px;font-weight:700;color:var(--mut)}
+  .tab.active{color:#06122c;background:linear-gradient(180deg,#ffd95e,#ffbe2e);border-color:#ffbe2e}
+
+  /* Filters */
+  .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  select{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:11px;padding:11px;font-size:14px;-webkit-appearance:none;appearance:none}
+
+  /* Deck card */
+  .deck{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px}
+  .deck .dh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .deck .dh .arch{font-size:15.5px;font-weight:800}
+  .deck .dh .sub{font-size:11.5px;color:var(--mut);margin-top:1px}
+  .score{margin-left:auto;text-align:center;min-width:62px}
+  .score .ring{font-size:26px;font-weight:900;line-height:1}
+  .score .scl{font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .cc{position:relative;border-radius:10px;overflow:hidden;background:#0a1226;border:1px solid var(--line)}
+  .cc img{width:100%;display:block;aspect-ratio:302/363;object-fit:cover}
+  .cc .lv{position:absolute;left:3px;bottom:3px;background:rgba(6,10,24,.85);border-radius:6px;
+    font-size:10px;font-weight:800;padding:1px 5px;color:#fff}
+  .cc .lv.max{color:var(--gold)}
+  .cc.evo{outline:2px solid var(--purple);outline-offset:-2px}
+  .cc .evob{position:absolute;right:3px;top:3px;background:var(--purple);border-radius:5px;font-size:8px;
+    font-weight:800;padding:1px 4px}
+  .cc.sub::after{content:"sub";position:absolute;right:3px;top:3px;background:var(--orange);color:#06122c;
+    font-size:8px;font-weight:800;padding:1px 4px;border-radius:5px}
+  .meta{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .meta .m{font-size:12px;color:var(--mut)}.meta .m b{color:var(--txt);font-weight:800}
+  .winbar{height:8px;border-radius:6px;background:#0a1226;overflow:hidden;margin-top:10px;border:1px solid var(--line)}
+  .winbar i{display:block;height:100%}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .t{font-size:10.5px;padding:3px 8px;border-radius:8px;background:var(--card2);color:var(--mut)}
+  .t.ok{background:rgba(58,208,122,.16);color:var(--green)}
+  .t.warn{background:rgba(255,159,67,.16);color:var(--orange)}
+  .t.bad{background:rgba(255,93,93,.16);color:var(--red)}
+  .copybtn{margin-top:12px;width:100%;border:none;border-radius:11px;padding:11px;font-weight:800;font-size:14px;
+    color:#fff;background:var(--card2);border:1px solid var(--line)}
+  .copybtn:active{background:#2c4067}
+
+  /* Collection grid */
+  .colgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .empty{text-align:center;color:var(--mut);padding:40px 10px;font-size:14px;line-height:1.6}
+  .loader{text-align:center;padding:50px 0;color:var(--mut)}
+  .spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--gold);
+    border-radius:50%;margin:0 auto 14px;animation:s 1s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .note{font-size:11.5px;color:var(--mut);line-height:1.5;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:11px;margin-bottom:14px}
+  .sech{font-size:13px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:18px 2px 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">Meu <span>Clash</span></div>
+    <button class="iconbtn" id="gear" onclick="openSetup()">⚙︎</button>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setupView" class="setup hidden">
+    <h2>Configurar</h2>
+    <p>Use uma vez. Sua chave e tag ficam salvas só neste aparelho (localStorage). O app fica exclusivo da sua conta.</p>
+    <label>Sua tag do Clash Royale</label>
+    <input type="text" id="tagInp" placeholder="#ABC123" autocapitalize="characters" autocorrect="off">
+    <label>Chave da API (Bearer token)</label>
+    <input type="password" id="keyInp" placeholder="eyJ0eXAi...">
+    <div id="setupErr" class="err hidden"></div>
+    <button class="btn" onclick="saveSetup()">Salvar e carregar</button>
+    <div class="help">
+      <b>Como pegar a chave (2 min):</b><br>
+      1. Entre em <b>developer.clashroyale.com</b> e crie uma conta grátis.<br>
+      2. Em <b>My Account → Create New Key</b>.<br>
+      3. No campo de IPs permitidos coloque exatamente: <code>45.79.218.79</code><br>
+      4. Crie, copie o token gigante e cole acima.<br><br>
+      Esse IP é o do <b>proxy do RoyaleAPI</b>, que deixa o app falar com a API oficial direto do navegador. A chave só <b>lê</b> dados públicos do jogo e pode ser revogada quando quiser.
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadView" class="loader hidden">
+    <div class="spin"></div>
+    <div>Buscando sua conta ao vivo…</div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errView" class="hidden">
+    <div class="setup">
+      <h2>Ops</h2>
+      <p id="errMsg" style="color:var(--red)"></p>
+      <button class="btn blue" onclick="loadPlayer()">Tentar de novo</button>
+      <button class="btn ghost" onclick="openSetup()">Mudar chave / tag</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="mainView" class="hidden">
+    <div class="phead">
+      <div>
+        <div class="nm" id="pName">—</div>
+        <div class="tg" id="pTag">—</div>
+      </div>
+      <div class="stat">
+        <div class="big" id="pTrophies">—</div>
+        <div class="lbl">troféus</div>
+      </div>
+    </div>
+    <div class="chips" id="pChips"></div>
+
+    <div class="tabs">
+      <div class="tab active" id="tabDecks" onclick="showTab('decks')">Decks pra mim</div>
+      <div class="tab" id="tabCards" onclick="showTab('cards')">Minhas cartas</div>
+    </div>
+
+    <!-- DECKS TAB -->
+    <div id="decksView">
+      <div class="note">As notas e a <b>chance estimada</b> são calculadas pelo app a partir do equilíbrio do deck, semelhança com arquétipos meta e os <b>seus níveis de carta</b>. É uma estimativa fundamentada — não uma taxa de vitória oficial de batalhas.</div>
+      <div class="filters">
+        <select id="fStyle" onchange="renderDecks()">
+          <option value="all">Todos os estilos</option>
+          <option value="cycle">Ciclo rápido</option>
+          <option value="beatdown">Beatdown</option>
+          <option value="control">Controle</option>
+          <option value="bait">Bait</option>
+          <option value="bridge">Bridge spam</option>
+          <option value="siege">Cerco</option>
+        </select>
+        <select id="fWin" onchange="renderDecks()">
+          <option value="all">Qualquer win condition</option>
+        </select>
+      </div>
+      <div id="deckList"></div>
+    </div>
+
+    <!-- CARDS TAB -->
+    <div id="cardsView" class="hidden">
+      <div class="chips" id="colStats"></div>
+      <div class="filters">
+        <select id="cSort" onchange="renderCollection()">
+          <option value="level">Ordenar: nível ↓</option>
+          <option value="levelAsc">Ordenar: nível ↑</option>
+          <option value="elixir">Ordenar: elixir</option>
+          <option value="name">Ordenar: nome</option>
+          <option value="rarity">Ordenar: raridade</option>
+        </select>
+        <select id="cFilter" onchange="renderCollection()">
+          <option value="all">Todas</option>
+          <option value="evo">Só com evolução</option>
+          <option value="max">Só maxadas</option>
+          <option value="notmax">Falta upar</option>
+        </select>
+      </div>
+      <div class="sech" id="colCount"></div>
+      <div class="colgrid" id="colGrid"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   CONFIG / STORAGE
+============================================================ */
+const PROXY = "https://proxy.royaleapi.dev/v1";
+const LS = { key:"cr_key", tag:"cr_tag" };
+let CFG = { key:localStorage.getItem(LS.key)||"", tag:localStorage.getItem(LS.tag)||"" };
+let PLAYER = null;      // raw player object
+let OWNED = {};         // normName -> {name, level, maxLevel, elixir, evo, icon, rarity}
+
+function $(id){return document.getElementById(id)}
+function show(v){["setupView","loadView","errView","mainView"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden")}
+
+function openSetup(){
+  $("tagInp").value = CFG.tag||"";
+  $("keyInp").value = CFG.key||"";
+  $("setupErr").classList.add("hidden");
+  show("setupView");
+}
+function saveSetup(){
+  let tag=$("tagInp").value.trim().toUpperCase().replace(/O/g,"0").replace(/[^#0-9A-Z]/g,"");
+  let key=$("keyInp").value.trim();
+  if(!tag){return setupErr("Coloque sua tag.")}
+  if(!tag.startsWith("#")) tag="#"+tag;
+  if(!key){return setupErr("Cole a chave da API.")}
+  CFG.tag=tag; CFG.key=key;
+  localStorage.setItem(LS.tag,tag); localStorage.setItem(LS.key,key);
+  loadPlayer();
+}
+function setupErr(m){$("setupErr").textContent=m;$("setupErr").classList.remove("hidden")}
+
+/* ============================================================
+   FETCH PLAYER (live)
+============================================================ */
+async function loadPlayer(){
+  if(!CFG.key||!CFG.tag){return openSetup()}
+  show("loadView");
+  try{
+    const tagEnc = encodeURIComponent(CFG.tag);
+    const res = await fetch(`${PROXY}/players/${tagEnc}`,{
+      headers:{ Authorization:`Bearer ${CFG.key}` }
+    });
+    if(res.status===403) throw new Error("Chave recusada (403). Confira se você colocou o IP 45.79.218.79 ao criar a chave, e se colou o token completo.");
+    if(res.status===404) throw new Error("Tag não encontrada (404). Confira sua tag do Clash Royale.");
+    if(res.status===429) throw new Error("Muitas requisições (429). Espere alguns segundos e tente de novo.");
+    if(!res.ok) throw new Error("Erro "+res.status+" ao buscar a conta.");
+    PLAYER = await res.json();
+    buildOwned();
+    renderPlayer();
+    show("mainView");
+    showTab("decks");
+  }catch(e){
+    $("errMsg").textContent = e.message || "Falha de conexão.";
+    show("errView");
+  }
+}
+
+function buildOwned(){
+  OWNED={};
+  const all = (PLAYER.cards||[]);
+  all.forEach(c=>{
+    const nn=norm(c.name);
+    const meta = CARD[nn] || {};
+    OWNED[nn]={
+      id:c.id,
+      name:c.name,
+      level:c.level,
+      maxLevel:c.maxLevel,
+      elixir:(c.elixirCost!=null?c.elixirCost:(meta.e!=null?meta.e:4)),
+      evo:(c.evolutionLevel?c.evolutionLevel:0) || (c.maxEvolutionLevel?0:0),
+      hasEvo:!!c.evolutionLevel,
+      icon:(c.iconUrls&&(c.iconUrls.medium||c.iconUrls.evolutionMedium))||"",
+      evoIcon:(c.iconUrls&&c.iconUrls.evolutionMedium)||"",
+      rarity:c.rarity||meta.r||"common"
+    };
+  });
+  // some accounts expose owned evolutions only via supportCards / separate flags; keep defensive
+}
+
+/* normalize card names for matching */
+function norm(s){return (s||"").toLowerCase().replace(/[.\-'’]/g,"").replace(/\s+/g," ").trim()}
+
+/* ============================================================
+   RENDER PLAYER HEADER
+============================================================ */
+function renderPlayer(){
+  $("pName").textContent = PLAYER.name||"—";
+  $("pTag").textContent = PLAYER.tag||CFG.tag;
+  $("pTrophies").textContent = (PLAYER.trophies!=null?PLAYER.trophies:"—");
+  const chips=[];
+  if(PLAYER.expLevel!=null) chips.push(["Rei","nv "+PLAYER.expLevel]);
+  if(PLAYER.bestTrophies!=null) chips.push(["Recorde",PLAYER.bestTrophies]);
+  if(PLAYER.arena&&PLAYER.arena.name) chips.push(["Arena",PLAYER.arena.name]);
+  if(PLAYER.wins!=null) chips.push(["Vitórias",PLAYER.wins]);
+  if(PLAYER.threeCrownWins!=null) chips.push(["3 coroas",PLAYER.threeCrownWins]);
+  const owned=Object.keys(OWNED).length;
+  chips.push(["Cartas",owned]);
+  $("pChips").innerHTML = chips.map(c=>`<div class="chip"><span>${c[0]}</span> <b>${c[1]}</b></div>`).join("");
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+function showTab(t){
+  $("tabDecks").classList.toggle("active",t==="decks");
+  $("tabCards").classList.toggle("active",t==="cards");
+  $("decksView").classList.toggle("hidden",t!=="decks");
+  $("cardsView").classList.toggle("hidden",t!=="cards");
+  if(t==="decks"){ buildWinFilter(); renderDecks(); }
+  else renderCollection();
+}
+
+/* ============================================================
+   COLLECTION
+============================================================ */
+const RARITY_ORDER={common:0,rare:1,epic:2,legendary:3,champion:4};
+function renderCollection(){
+  const sort=$("cSort").value, filt=$("cFilter").value;
+  let arr=Object.values(OWNED);
+  if(filt==="evo") arr=arr.filter(c=>c.hasEvo);
+  if(filt==="max") arr=arr.filter(c=>c.level>=c.maxLevel);
+  if(filt==="notmax") arr=arr.filter(c=>c.level<c.maxLevel);
+  arr.sort((a,b)=>{
+    if(sort==="level") return b.level-a.level||a.name.localeCompare(b.name);
+    if(sort==="levelAsc") return a.level-b.level||a.name.localeCompare(b.name);
+    if(sort==="elixir") return a.elixir-b.elixir||b.level-a.level;
+    if(sort==="name") return a.name.localeCompare(b.name);
+    if(sort==="rarity") return (RARITY_ORDER[b.rarity]||0)-(RARITY_ORDER[a.rarity]||0)||b.level-a.level;
+    return 0;
+  });
+  $("colCount").textContent = arr.length+" cartas";
+  // collection stats
+  const total=Object.values(OWNED);
+  const maxed=total.filter(c=>c.level>=c.maxLevel).length;
+  const evos=total.filter(c=>c.hasEvo).length;
+  const avg=total.length?(total.reduce((s,c)=>s+c.level,0)/total.length).toFixed(1):0;
+  $("colStats").innerHTML=[
+    ["Nível médio",avg],["Maxadas",maxed],["Evoluções",evos]
+  ].map(c=>`<div class="chip"><span>${c[0]}</span> <b>${c[1]}</b></div>`).join("");
+  $("colGrid").innerHTML = arr.map(c=>cardCell(c,false)).join("");
+}
+
+function cardCell(c,isSub){
+  const max=c.level>=c.maxLevel;
+  const img = c.icon||"";
+  return `<div class="cc ${c.hasEvo?'evo':''} ${isSub?'sub':''}">
+    ${img?`<img loading="lazy" src="${img}" alt="${c.name}">`:`<div style="aspect-ratio:302/363"></div>`}
+    ${c.hasEvo?'<div class="evob">EVO</div>':''}
+    <div class="lv ${max?'max':''}">nv ${c.level}</div>
+  </div>`;
+}
+
+/* ============================================================
+   DECK ENGINE
+   - Templates de arquétipos meta -> casados com sua coleção
+   - Substituição por função quando falta carta
+   - Motor de nota + chance estimada
+============================================================ */
+
+// roles: win, miniTank, tank, splash, air, building, smallSpell, bigSpell, cycle, support, swarm
+// e = elixir base (fallback se a API não trouxer)
+const CARD = {
+  // win conditions
+  "hog rider":{e:4,roles:["win","cycle"],r:"rare"},
+  "royal giant":{e:6,roles:["win","tank"],r:"common"},
+  "giant":{e:5,roles:["win","tank"]},
+  "golem":{e:8,roles:["win","tank"]},
+  "balloon":{e:5,roles:["win","air"]},
+  "lava hound":{e:7,roles:["win","tank","air"]},
+  "graveyard":{e:5,roles:["win"]},
+  "miner":{e:3,roles:["win","miniTank","cycle"]},
+  "xbow":{e:6,roles:["win","building"]},
+  "x-bow":{e:6,roles:["win","building"]},
+  "mortar":{e:4,roles:["win","building"]},
+  "goblin barrel":{e:3,roles:["win"]},
+  "wall breakers":{e:2,roles:["win","cycle"]},
+  "three musketeers":{e:9,roles:["win","air"]},
+  "royal hogs":{e:5,roles:["win"]},
+  "ram rider":{e:5,roles:["win","miniTank"]},
+  "battle ram":{e:4,roles:["win","cycle"]},
+  "electro giant":{e:7,roles:["win","tank"]},
+  "goblin giant":{e:6,roles:["win","tank"]},
+  "elixir golem":{e:3,roles:["win","tank"]},
+  "goblin drill":{e:4,roles:["win"]},
+  "skeleton barrel":{e:3,roles:["win","air","cycle"]},
+  "mega knight":{e:7,roles:["win","tank","splash"]},
+  "pekka":{e:7,roles:["miniTank","tank","support"]},
+  "sparky":{e:6,roles:["splash","support"]},
+  // tanks / mini tanks
+  "ice golem":{e:2,roles:["miniTank","cycle"]},
+  "knight":{e:3,roles:["miniTank","cycle"]},
+  "valkyrie":{e:4,roles:["miniTank","splash"]},
+  "dark prince":{e:4,roles:["miniTank","splash"]},
+  "prince":{e:5,roles:["miniTank"]},
+  "lumberjack":{e:4,roles:["miniTank","cycle"]},
+  "bandit":{e:3,roles:["miniTank","cycle"]},
+  "fisherman":{e:3,roles:["miniTank","support"]},
+  "royal ghost":{e:3,roles:["miniTank","splash","cycle"]},
+  "mighty miner":{e:4,roles:["miniTank","cycle"]},
+  "golden knight":{e:4,roles:["miniTank","win"]},
+  "skeleton king":{e:4,roles:["miniTank","swarm"]},
+  "archer queen":{e:5,roles:["support","air"]},
+  "monk":{e:5,roles:["miniTank","support"]},
+  "little prince":{e:3,roles:["support","air"]},
+  "boss bandit":{e:4,roles:["miniTank","cycle"]},
+  // support / air defense
+  "musketeer":{e:4,roles:["air","support"]},
+  "archers":{e:3,roles:["air","support","cycle"]},
+  "mega minion":{e:3,roles:["air","support"]},
+  "minions":{e:3,roles:["air","swarm","cycle"]},
+  "minion horde":{e:5,roles:["air","swarm"]},
+  "electro wizard":{e:4,roles:["air","support","splash"]},
+  "wizard":{e:5,roles:["air","splash"]},
+  "ice wizard":{e:3,roles:["air","splash","support"]},
+  "baby dragon":{e:4,roles:["air","splash"]},
+  "inferno dragon":{e:4,roles:["air","support"]},
+  "electro dragon":{e:5,roles:["air","splash"]},
+  "phoenix":{e:4,roles:["air","support"]},
+  "flying machine":{e:4,roles:["air","support"]},
+  "dart goblin":{e:3,roles:["air","support","cycle"]},
+  "magic archer":{e:4,roles:["air","splash","support"]},
+  "spear goblins":{e:2,roles:["air","swarm","cycle"]},
+  "firecracker":{e:3,roles:["air","support","cycle"]},
+  "hunter":{e:4,roles:["air","support"]},
+  "night witch":{e:4,roles:["air","support","swarm"]},
+  "witch":{e:5,roles:["air","splash","swarm"]},
+  "mother witch":{e:4,roles:["air","splash","support"]},
+  "executioner":{e:5,roles:["air","splash"]},
+  "bowler":{e:5,roles:["splash","support"]},
+  "bomber":{e:2,roles:["splash","cycle"]},
+  "princess":{e:3,roles:["air","splash","support"]},
+  "goblinstein":{e:5,roles:["air","support"]},
+  "rune giant":{e:4,roles:["support","tank"]},
+  // swarm / cheap
+  "skeletons":{e:1,roles:["swarm","cycle"]},
+  "ice spirit":{e:1,roles:["cycle","support"]},
+  "electro spirit":{e:1,roles:["cycle","support","air"]},
+  "fire spirit":{e:1,roles:["cycle","air"]},
+  "heal spirit":{e:1,roles:["cycle","support"]},
+  "bats":{e:2,roles:["air","swarm","cycle"]},
+  "goblins":{e:2,roles:["swarm","cycle"]},
+  "goblin gang":{e:3,roles:["swarm","air"]},
+  "guards":{e:3,roles:["swarm"]},
+  "skeleton army":{e:3,roles:["swarm"]},
+  "barbarians":{e:5,roles:["swarm","support"]},
+  "elite barbarians":{e:6,roles:["swarm","support"]},
+  "minion":{e:3,roles:["air","swarm"]},
+  "rascals":{e:5,roles:["swarm","splash"]},
+  "royal recruits":{e:7,roles:["swarm","tank"]},
+  "goblin machine":{e:5,roles:["miniTank","support"]},
+  "spirit empress":{e:4,roles:["air","support"]},
+  // buildings
+  "cannon":{e:3,roles:["building","cycle"]},
+  "tesla":{e:4,roles:["building","air"]},
+  "inferno tower":{e:5,roles:["building"]},
+  "bomb tower":{e:4,roles:["building","splash"]},
+  "tombstone":{e:3,roles:["building","swarm"]},
+  "goblin cage":{e:4,roles:["building","miniTank"]},
+  "goblin hut":{e:5,roles:["building"]},
+  "furnace":{e:4,roles:["building","air"]},
+  "barbarian hut":{e:7,roles:["building"]},
+  "elixir collector":{e:6,roles:["building","support"]},
+  "hero tombstone":{e:3,roles:["building","win"]},
+  // spells
+  "the log":{e:2,roles:["smallSpell"]},
+  "zap":{e:2,roles:["smallSpell","air"]},
+  "giant snowball":{e:2,roles:["smallSpell","air"]},
+  "snowball":{e:2,roles:["smallSpell","air"]},
+  "arrows":{e:3,roles:["smallSpell","air"]},
+  "barbarian barrel":{e:2,roles:["smallSpell"]},
+  "royal delivery":{e:3,roles:["smallSpell","air"]},
+  "tornado":{e:3,roles:["smallSpell","splash"]},
+  "fireball":{e:4,roles:["bigSpell","air"]},
+  "poison":{e:4,roles:["bigSpell","air"]},
+  "rocket":{e:6,roles:["bigSpell"]},
+  "lightning":{e:6,roles:["bigSpell","air"]},
+  "earthquake":{e:3,roles:["bigSpell"]},
+  "freeze":{e:4,roles:["bigSpell","air"]},
+  "rage":{e:2,roles:["smallSpell"]},
+  "clone":{e:3,roles:["smallSpell"]},
+  "void":{e:3,roles:["bigSpell","air"]},
+  "goblin curse":{e:2,roles:["smallSpell"]}
+};
+
+// archetypes: list of 8 card names (normalized matching), style, win condition, base win estimate
+const ARCH = [
+  {name:"Hog 2.6 Cycle", style:"cycle", win:"hog rider", base:54,
+   cards:["hog rider","musketeer","ice golem","ice spirit","skeletons","cannon","fireball","the log"]},
+  {name:"Hog Earthquake", style:"cycle", win:"hog rider", base:53,
+   cards:["hog rider","musketeer","ice golem","skeletons","earthquake","tesla","fireball","the log"]},
+  {name:"X-Bow 2.9", style:"siege", win:"x-bow", base:53,
+   cards:["x-bow","tesla","archers","knight","ice spirit","skeletons","fireball","the log"]},
+  {name:"Mortar Cycle", style:"siege", win:"mortar", base:51,
+   cards:["mortar","knight","archers","ice spirit","skeletons","bomber","fireball","the log"]},
+  {name:"Lava Loon", style:"beatdown", win:"lava hound", base:52,
+   cards:["lava hound","balloon","mega minion","tombstone","baby dragon","guards","fireball","zap"]},
+  {name:"Lava Miner", style:"beatdown", win:"lava hound", base:51,
+   cards:["lava hound","miner","mega minion","minions","baby dragon","tombstone","fireball","zap"]},
+  {name:"Golem Beatdown", style:"beatdown", win:"golem", base:52,
+   cards:["golem","night witch","baby dragon","mega minion","lumberjack","tornado","lightning","barbarian barrel"]},
+  {name:"Giant Double Prince", style:"beatdown", win:"giant", base:50,
+   cards:["giant","prince","dark prince","mega minion","electro wizard","minions","poison","zap"]},
+  {name:"Graveyard Control", style:"control", win:"graveyard", base:53,
+   cards:["graveyard","knight","baby dragon","poison","tombstone","ice wizard","barbarian barrel","tornado"]},
+  {name:"Miner Poison Control", style:"control", win:"miner", base:53,
+   cards:["miner","poison","bats","skeletons","ice spirit","valkyrie","inferno tower","the log"]},
+  {name:"Miner Wall Breakers", style:"cycle", win:"miner", base:53,
+   cards:["miner","wall breakers","bats","skeletons","spear goblins","valkyrie","rocket","the log"]},
+  {name:"Log Bait", style:"bait", win:"goblin barrel", base:52,
+   cards:["goblin barrel","princess","goblin gang","inferno tower","knight","rocket","ice spirit","the log"]},
+  {name:"Mega Knight Bait", style:"bait", win:"mega knight", base:51,
+   cards:["mega knight","goblin barrel","goblin gang","inferno dragon","bandit","zap","princess","skeleton barrel"]},
+  {name:"Royal Giant Fisherman", style:"control", win:"royal giant", base:53,
+   cards:["royal giant","fisherman","electro wizard","mega minion","hunter","skeletons","lightning","barbarian barrel"]},
+  {name:"P.E.K.K.A Bridge Spam", style:"bridge", win:"battle ram", base:52,
+   cards:["pekka","battle ram","bandit","royal ghost","electro wizard","magic archer","poison","zap"]},
+  {name:"Ram Rider Bridge Spam", style:"bridge", win:"ram rider", base:51,
+   cards:["ram rider","bandit","royal ghost","electro wizard","magic archer","fisherman","poison","zap"]},
+  {name:"Royal Hogs Lightning", style:"control", win:"royal hogs", base:51,
+   cards:["royal hogs","fireball","flying machine","earthquake","tombstone","royal ghost","barbarian barrel","fisherman"]},
+  {name:"Electro Giant Tornado", style:"beatdown", win:"electro giant", base:49,
+   cards:["electro giant","tornado","lightning","baby dragon","bowler","tornado","electro wizard","barbarian barrel"]},
+  {name:"Goblin Drill Control", style:"control", win:"goblin drill", base:51,
+   cards:["goblin drill","miner","bomb tower","valkyrie","bats","skeletons","earthquake","the log"]},
+  {name:"Three Musketeers", style:"beatdown", win:"three musketeers", base:49,
+   cards:["three musketeers","battle ram","elixir collector","ice golem","minions","heal spirit","zap","barbarian barrel"]},
+  {name:"Goblin Giant Sparky", style:"beatdown", win:"goblin giant", base:50,
+   cards:["goblin giant","sparky","electro wizard","mega minion","baby dragon","zap","rage","goblin gang"]},
+  {name:"Balloon Cycle", style:"cycle", win:"balloon", base:52,
+   cards:["balloon","ice golem","skeletons","ice spirit","baby dragon","tombstone","fireball","the log"]}
+];
+
+const ROLE_REQ = [
+  {role:"win", label:"Win condition", w:24},
+  {role:"air", label:"Defesa aérea", w:16},
+  {role:"splash", label:"Dano em área", w:12},
+  {role:"smallSpell", label:"Feitiço leve", w:11},
+  {role:"bigSpell", label:"Feitiço pesado", w:9},
+  {role:"cycle", label:"Cartas de ciclo", w:8}
+];
+
+function deckHas(deck,role){return deck.some(c=>roleSet(c.norm).includes(role))}
+function roleSet(nn){return (CARD[nn]&&CARD[nn].roles)||[]}
+
+// build all candidate decks from owned cards based on archetypes
+function buildDecks(){
+  const decks=[];
+  ARCH.forEach(a=>{
+    const used=new Set();
+    const deck=[];
+    let subs=0, missing=0;
+    // dedupe template (some templates accidentally repeat e.g. tornado)
+    const tmpl=[...new Set(a.cards)];
+    tmpl.forEach(cn=>{
+      const nn=norm(cn);
+      if(OWNED[nn] && !used.has(nn)){
+        used.add(nn); deck.push(mkCard(nn,false));
+      }else{
+        // substitute by primary role of the template card
+        const roles=roleSet(nn);
+        const sub=findSub(roles,used);
+        if(sub){used.add(sub);deck.push(mkCard(sub,true));subs++;}
+        else missing++;
+      }
+    });
+    // fill to 8 if dedupe shrank it
+    while(deck.length<8){
+      const sub=findSub(["support","cycle","air"],used);
+      if(!sub)break; used.add(sub); deck.push(mkCard(sub,true));
+    }
+    if(deck.length===8 && missing===0){
+      const sc=scoreDeck(deck,a,subs);
+      decks.push({arch:a,deck,subs,...sc});
+    }
+  });
+  // also a "best of your collection" generic deck if few archetypes matched
+  decks.sort((x,y)=>y.score-x.score);
+  return decks;
+}
+
+function mkCard(nn,isSub){
+  const o=OWNED[nn];
+  return {norm:nn,id:o.id,name:o.name,level:o.level,maxLevel:o.maxLevel,elixir:o.elixir,
+    hasEvo:o.hasEvo,icon:o.icon,sub:isSub};
+}
+
+function findSub(roles,used){
+  let best=null,bestLv=-1;
+  for(const nn in OWNED){
+    if(used.has(nn))continue;
+    const rs=roleSet(nn);
+    if(roles.some(r=>rs.includes(r))){
+      const lv=OWNED[nn].level;
+      if(lv>bestLv){bestLv=lv;best=nn;}
+    }
+  }
+  return best;
+}
+
+function scoreDeck(deck,a,subs){
+  let score=0; const tags=[];
+  // 1) role coverage (up to 80)
+  ROLE_REQ.forEach(r=>{
+    if(deckHas(deck,r.role)){score+=r.w;tags.push({t:r.label,k:"ok"});}
+    else{tags.push({t:"sem "+r.label.toLowerCase(),k:r.role==="win"?"bad":"warn"});}
+  });
+  // 2) elixir balance (up to 12)
+  const avg=deck.reduce((s,c)=>s+c.elixir,0)/8;
+  let elixScore=12-Math.min(12,Math.abs(avg-3.6)*4);
+  score+=Math.max(0,elixScore);
+  // 3) card levels vs 15 (up to 20)
+  const avgLv=deck.reduce((s,c)=>s+c.level,0)/8;
+  const lvScore=Math.max(0,Math.min(20,(avgLv-8)/7*20));
+  score+=lvScore;
+  // 4) penalty for substitutions
+  score-=subs*4;
+  // 5) evolution bonus
+  const evos=deck.filter(c=>c.hasEvo).length;
+  score+=Math.min(8,evos*4);
+  if(evos>0)tags.push({t:evos+" evolução"+(evos>1?"es":""),k:"ok"});
+  if(subs>0)tags.push({t:subs+" substituição"+(subs>1?"es":""),k:"warn"});
+
+  score=Math.round(Math.max(0,Math.min(100,score)));
+
+  // estimated win chance: archetype base adjusted by your deck quality & levels
+  const qualityAdj=(score-65)/3;             // deck balance/levels push around base
+  const lvlAdj=(avgLv-13)*1.6;               // ladder level matters a lot
+  const subAdj=-subs*1.5;
+  let win=a.base+qualityAdj+lvlAdj+subAdj;
+  win=Math.max(38,Math.min(66,win));
+
+  return {score,win:Math.round(win),avg:avg.toFixed(1),avgLv:avgLv.toFixed(1),evos,tags};
+}
+
+function winColor(w){return w>=56?"var(--green)":w>=50?"var(--yellow)":w>=46?"var(--orange)":"var(--red)"}
+function scoreColor(s){return s>=80?"var(--green)":s>=65?"var(--yellow)":s>=50?"var(--orange)":"var(--red)"}
+
+let DECKS=[];
+function buildWinFilter(){
+  DECKS=buildDecks();
+  const wins=[...new Set(DECKS.map(d=>d.arch.win))];
+  const sel=$("fWin");
+  const cur=sel.value;
+  sel.innerHTML='<option value="all">Qualquer win condition</option>'+
+    wins.map(w=>{const o=OWNED[norm(w)];return `<option value="${w}">${o?o.name:cap(w)}</option>`}).join("");
+  if([...sel.options].some(o=>o.value===cur))sel.value=cur;
+}
+function cap(s){return s.replace(/\b\w/g,m=>m.toUpperCase())}
+
+function renderDecks(){
+  const style=$("fStyle").value, win=$("fWin").value;
+  let list=DECKS.filter(d=>(style==="all"||d.arch.style===style)&&(win==="all"||d.arch.win===win));
+  if(!list.length){
+    $("deckList").innerHTML=`<div class="empty">Nenhum deck completo encontrado para esse filtro com as cartas que você tem.<br><br>Tente "Todos os estilos" — o app monta decks com substituições a partir do seu inventário.</div>`;
+    return;
+  }
+  $("deckList").innerHTML=list.map(d=>deckCard(d)).join("");
+}
+
+function deckCard(d){
+  const cells=d.deck.map(c=>{
+    const max=c.level>=c.maxLevel;
+    return `<div class="cc ${c.hasEvo?'evo':''} ${c.sub?'sub':''}">
+      ${c.icon?`<img loading="lazy" src="${c.icon}" alt="${c.name}">`:''}
+      ${c.hasEvo?'<div class="evob">EVO</div>':''}
+      <div class="lv ${max?'max':''}">nv ${c.level}</div>
+    </div>`;
+  }).join("");
+  const tags=d.tags.slice(0,7).map(t=>`<span class="t ${t.k}">${t.t}</span>`).join("");
+  const verdict = d.score>=80?"Excelente pra você":d.score>=65?"Bom deck":d.score>=50?"Jogável":"Fraco / faltam peças";
+  return `<div class="deck">
+    <div class="dh">
+      <div>
+        <div class="arch">${d.arch.name}</div>
+        <div class="sub">${cap(d.arch.style)} · ${verdict}</div>
+      </div>
+      <div class="score">
+        <div class="ring" style="color:${scoreColor(d.score)}">${d.score}</div>
+        <div class="scl">nota /100</div>
+      </div>
+    </div>
+    <div class="grid">${cells}</div>
+    <div class="meta">
+      <div class="m">⚡ Elixir médio <b>${d.avg}</b></div>
+      <div class="m">📊 Nível médio <b>${d.avgLv}</b></div>
+      <div class="m">🏆 Chance estimada <b style="color:${winColor(d.win)}">${d.win}%</b></div>
+    </div>
+    <div class="winbar"><i style="width:${Math.round((d.win-38)/(66-38)*100)}%;background:${winColor(d.win)}"></i></div>
+    <div class="tags">${tags}</div>
+    <button class="copybtn" onclick='copyDeck(${JSON.stringify(d.deck.map(c=>c.id))})'>📋 Copiar deck pro jogo</button>
+  </div>`;
+}
+
+function copyDeck(ids){
+  if(ids.some(i=>i==null)){alert("Não consegui o ID de alguma carta deste deck.");return;}
+  const link="https://link.clashroyale.com/deck/en?deck="+ids.join(";");
+  window.location.href=link;
+}
+
+/* ============================================================
+   BOOT
+============================================================ */
+if(CFG.key&&CFG.tag){ loadPlayer(); } else { openSetup(); }
+</script>
+</body>
+</html>
